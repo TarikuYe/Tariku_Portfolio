@@ -38,12 +38,21 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-// PostgreSQL Pool - Refined for Vercel + Supabase/Neon SSL
+// PostgreSQL Pool
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
     ssl: {
-        rejectUnauthorized: false // Required for Supabase/Neon self-signed certs
+        rejectUnauthorized: false
     }
+});
+
+// Nodemailer Transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+    },
 });
 
 // Health Check
@@ -178,12 +187,27 @@ app.get('/api/inquiries', async (req, res) => {
 app.post('/api/inquiries', async (req, res) => {
     const { name, email, message } = req.body;
     try {
+        // 1. Save to Database
         const result = await pool.query(
             'INSERT INTO messages (name, email, message) VALUES ($1, $2, $3) RETURNING *',
             [name, email, message]
         );
+
+        // 2. Send Email Notification
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: process.env.ADMIN_EMAIL,
+            subject: `New Inquiry from ${name}`,
+            text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+        };
+
+        // Use Promise-based sendMail for Serverless stability
+        await transporter.sendMail(mailOptions);
+
+        console.log('Notification email sent successfully');
         res.status(201).json(result.rows[0]);
     } catch (err) {
+        console.error('Inquiry error:', err.message);
         res.status(500).json({ error: err.message });
     }
 });

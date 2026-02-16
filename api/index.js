@@ -132,6 +132,17 @@ app.put('/api/projects/:id', async (req, res) => {
     }
 });
 
+app.post('/api/projects/:id/view', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('UPDATE projects SET views = COALESCE(views, 0) + 1 WHERE id = $1', [id]);
+        res.json({ message: 'View counted' });
+    } catch (err) {
+        console.error('Error incrementing view:', err.message);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.delete('/api/projects/:id', async (req, res) => {
     const { id } = req.params;
     try {

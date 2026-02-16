@@ -168,6 +168,19 @@ const Projects = () => {
     const [selectedProject, setSelectedProject] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    const trackView = async (id) => {
+        try {
+            await fetch(`/api/projects/${id}/view`, { method: 'POST' });
+        } catch (error) {
+            console.error('Error tracking view:', error);
+        }
+    };
+
+    const handleProjectClick = (project) => {
+        setSelectedProject(project);
+        trackView(project.id);
+    };
+
     useEffect(() => {
         const fetchProjects = async () => {
             try {
@@ -220,7 +233,7 @@ const Projects = () => {
                                 <ProjectCard
                                     key={project.id}
                                     project={project}
-                                    onClick={setSelectedProject}
+                                    onClick={handleProjectClick}
                                 />
                             ))}
                         </AnimatePresence>

@@ -83,6 +83,12 @@ const ProjectManager = () => {
         const file = e.target.files[0];
         if (!file) return;
 
+        // Vercel Serverless Function limit is 4.5MB
+        if (file.size > 4.5 * 1024 * 1024) {
+            setFormError('Image is too large. Please select an image under 4.5 MB.');
+            return;
+        }
+
         const formData = new FormData();
         formData.append('image', file);
 

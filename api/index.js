@@ -38,11 +38,11 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage });
 
-// PostgreSQL Pool
+// PostgreSQL Pool - Refined for Vercel + Supabase/Neon SSL
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
     ssl: {
-        rejectUnauthorized: false
+        rejectUnauthorized: false // Required for Supabase/Neon self-signed certs
     }
 });
 
@@ -57,12 +57,11 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// Image Upload Endpoint (Now using Cloudinary)
+// Image Upload Endpoint
 app.post('/api/upload', upload.single('image'), (req, res) => {
     if (!req.file || !req.file.path) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
-    // Cloudinary returns the permanent URL in req.file.path
     res.json({ imageUrl: req.file.path });
 });
 
@@ -123,6 +122,16 @@ app.put('/api/projects/:id', async (req, res) => {
     }
 });
 
+app.delete('/api/projects/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM projects WHERE id = $1', [id]);
+        res.json({ message: 'Project deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // 3. CMS: Blog
 app.get('/api/blog', async (req, res) => {
     try {
@@ -146,7 +155,26 @@ app.post('/api/blog', async (req, res) => {
     }
 });
 
+app.delete('/api/blog/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM blog_posts WHERE id = $1', [id]);
+        res.json({ message: 'Blog post deleted' });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // 4. Inquiries
+app.get('/api/inquiries', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM messages ORDER BY created_at DESC');
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.post('/api/inquiries', async (req, res) => {
     const { name, email, message } = req.body;
     try {
@@ -155,6 +183,16 @@ app.post('/api/inquiries', async (req, res) => {
             [name, email, message]
         );
         res.status(201).json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+app.delete('/api/inquiries/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM messages WHERE id = $1', [id]);
+        res.json({ message: 'Inquiry deleted' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -170,16 +208,6 @@ app.get('/api/stats', async (req, res) => {
             recentBlogComments: parseInt(blogCount.rows[0].count || 0),
             dbStatus: 'Connected',
         });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.delete('/api/projects/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await pool.query('DELETE FROM projects WHERE id = $1', [id]);
-        res.json({ message: 'Project deleted' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

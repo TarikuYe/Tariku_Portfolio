@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Home from './Home';
+import Blogs from './pages/Blogs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import AdminLogin from './components/admin/AdminLogin';
@@ -37,6 +38,7 @@ function App() {
       <div className="bg-dark-darker min-h-screen relative text-slate-200">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/blog" element={<Blogs />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/admin" element={<AdminLogin />} />

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Loader2, X, Calendar, Clock } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { Link } from 'react-router-dom';
 
 const PostModal = ({ post, isOpen, onClose }) => {
     if (!isOpen || !post) return null;
@@ -104,6 +105,9 @@ const Blog = () => {
         date: new Date(p.display_date || p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     })) : fallbackArticles;
 
+    // Only show top 3 on home page
+    const limitedArticles = displayArticles.slice(0, 3);
+
     return (
         <section id="blog" className="section-padding bg-dark relative">
             <div className="container mx-auto">
@@ -118,15 +122,18 @@ const Blog = () => {
                         <p className="text-slate-400">Positioning thought leadership through technical writing.</p>
                     </motion.div>
 
-                    <motion.a
-                        href="#"
+                    <motion.div
                         initial={{ opacity: 0, x: 20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="flex items-center gap-2 text-primary hover:text-secondary transition-colors font-medium group"
                     >
-                        Read All Articles <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-                    </motion.a>
+                        <Link
+                            to="/blog"
+                            className="flex items-center gap-2 text-primary hover:text-secondary transition-colors font-medium group"
+                        >
+                            Read All Articles <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </motion.div>
                 </div>
 
                 {loading ? (
@@ -135,7 +142,7 @@ const Blog = () => {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {displayArticles.map((article, index) => (
+                        {limitedArticles.map((article, index) => (
                             <motion.article
                                 key={article.id || index}
                                 initial={{ opacity: 0, y: 30 }}

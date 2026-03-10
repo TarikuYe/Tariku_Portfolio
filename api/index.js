@@ -176,6 +176,23 @@ app.post('/api/blog', async (req, res) => {
     }
 });
 
+app.put('/api/blog/:id', async (req, res) => {
+    const { id } = req.params;
+    const { title, content, date } = req.body;
+    try {
+        const result = await pool.query(
+            'UPDATE blog_posts SET title = $1, content = $2, published_date = $3 WHERE id = $4 RETURNING *',
+            [title, content, date || new Date(), id]
+        );
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: 'Blog post not found' });
+        }
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.delete('/api/blog/:id', async (req, res) => {
     const { id } = req.params;
     try {

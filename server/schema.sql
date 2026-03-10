@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS projects (
     tech_stack TEXT,
     source_url TEXT,
     demo_url TEXT,
+    github_url TEXT,
     price DECIMAL(10, 2) DEFAULT 0.00,
     views INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -17,6 +18,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
+    published_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

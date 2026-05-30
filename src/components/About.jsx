@@ -15,7 +15,7 @@ const About = () => {
                         <h2 className="text-4xl md:text-5xl font-bold mb-8 italic">About <span className="text-gradient">Me</span></h2>
                         <div className="space-y-6 text-xl text-slate-400 leading-relaxed font-light">
                             <p>
-                                I’m a full-stack developer who thrives at the intersection of design and engineering. With 3+ years of experience in the React ecosystem, I build clean, scalable, and maintainable applications that deliver real-world impact and exceptional user experiences.
+                                I’m a full-stack developer who thrives at the intersection of design and engineering. With 1+ years of experience in the React ecosystem, I build clean, scalable, and maintainable applications that deliver real-world impact and exceptional user experiences.
                             </p>
                             <p>
                                 I believe great software is more than just code—it’s an experience. My approach combines rigorous engineering principles with a designer’s eye for detail. I specialize in transforming complex system and AI model outputs into intuitive, user-friendly interfaces while ensuring every solution is scalable, ethical, and performance-driven.
@@ -24,8 +24,8 @@ const About = () => {
 
                         <div className="mt-12 grid grid-cols-2 gap-8">
                             <div className="glass-card p-6">
-                                <span className="block text-4xl font-bold text-primary mb-2">3+</span>
-                                <span className="text-sm text-slate-500 uppercase tracking-widest">Years Experience</span>
+                                <span className="block text-4xl font-bold text-primary mb-2">1+</span>
+                                <span className="text-sm text-slate-500 uppercase tracking-widest">Year Experience</span>
                             </div>
                             {/* <div className="glass-card p-6">
                                 <span className="block text-4xl font-bold text-secondary mb-2"></span>

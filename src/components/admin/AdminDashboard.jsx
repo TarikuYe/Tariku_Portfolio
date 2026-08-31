@@ -409,7 +409,16 @@ const ProjectManager = () => {
                     >
                         <div className="h-48 relative bg-white/5">
                             {project.image_url ? (
-                                <img src={project.image_url} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                <img
+                                    src={project.image_url}
+                                    alt={project.title}
+                                    referrerPolicy="no-referrer"
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui, sans-serif' font-size='22' font-weight='600' fill='%2310b981'%3EProject Preview%3C/text%3E%3C/svg%3E";
+                                    }}
+                                />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-slate-600 italic text-xs">
                                     No Image Uploaded

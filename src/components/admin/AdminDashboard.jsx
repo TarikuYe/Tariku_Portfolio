@@ -36,6 +36,15 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
     </motion.div>
 );
 
+const getDisplayImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('/')) return url;
+    if (url.includes('res.cloudinary.com')) {
+        return `/api/proxy-image?url=${encodeURIComponent(url)}`;
+    }
+    return url;
+};
+
 const ProjectManager = () => {
     const [projects, setProjects] = useState([]);
     const [newProject, setNewProject] = useState({
@@ -285,13 +294,15 @@ const ProjectManager = () => {
                                 {newProject.imageUrl && (
                                     <div className="mt-4 relative group w-full h-48 rounded-xl overflow-hidden border border-white/10 bg-black/20 flex items-center justify-center">
                                         <img
-                                            src={newProject.imageUrl}
+                                            src={getDisplayImageUrl(newProject.imageUrl)}
                                             alt=""
+                                            referrerPolicy="no-referrer"
                                             className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-20"
                                         />
                                         <img
-                                            src={newProject.imageUrl}
+                                            src={getDisplayImageUrl(newProject.imageUrl)}
                                             alt="Preview"
+                                            referrerPolicy="no-referrer"
                                             className="relative z-10 max-w-full max-h-full object-contain"
                                         />
                                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
@@ -410,7 +421,7 @@ const ProjectManager = () => {
                         <div className="h-48 relative bg-white/5">
                             {project.image_url ? (
                                 <img
-                                    src={project.image_url}
+                                    src={getDisplayImageUrl(project.image_url)}
                                     alt={project.title}
                                     referrerPolicy="no-referrer"
                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"

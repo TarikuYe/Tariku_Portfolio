@@ -4,17 +4,23 @@ import { Github, ExternalLink, X, ArrowUpRight, Loader2, Download, ShoppingBag }
 
 const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui, sans-serif' font-size='22' font-weight='600' fill='%2310b981'%3EProject Preview%3C/text%3E%3C/svg%3E";
 
-const handleImageError = (e, originalSrc) => {
-    const currentSrc = e.target.src;
-    if (originalSrc && originalSrc.includes('res.cloudinary.com') && !currentSrc.includes('/api/proxy-image')) {
-        e.target.src = `/api/proxy-image?url=${encodeURIComponent(originalSrc)}`;
-    } else {
-        e.target.onerror = null;
-        e.target.src = DEFAULT_FALLBACK_IMAGE;
+const getDisplayImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('/')) return url;
+    if (url.includes('res.cloudinary.com')) {
+        return `/api/proxy-image?url=${encodeURIComponent(url)}`;
     }
+    return url;
+};
+
+const handleImageError = (e) => {
+    e.target.onerror = null;
+    e.target.src = DEFAULT_FALLBACK_IMAGE;
 };
 
 const ProjectCard = ({ project, onClick }) => {
+    const displayImage = getDisplayImageUrl(project.image_url);
+
     return (
         <motion.div
             layout
@@ -25,14 +31,14 @@ const ProjectCard = ({ project, onClick }) => {
             onClick={() => onClick(project)}
         >
             <div className="relative h-64 overflow-hidden bg-white/5">
-                {project.image_url ? (
+                {displayImage ? (
                     <img
-                        src={project.image_url}
+                        src={displayImage}
                         alt={project.title}
                         referrerPolicy="no-referrer"
                         loading="lazy"
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                        onError={(e) => handleImageError(e, project.image_url)}
+                        onError={handleImageError}
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-600 italic text-xs">
@@ -65,6 +71,7 @@ const ProjectCard = ({ project, onClick }) => {
 
 const ProjectModal = ({ project, isOpen, onClose }) => {
     if (!isOpen || !project) return null;
+    const displayImage = getDisplayImageUrl(project.image_url);
 
     return (
         <AnimatePresence>
@@ -91,23 +98,23 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
 
                     <div className="grid lg:grid-cols-2 h-full min-h-[600px]">
                         <div className="relative h-80 lg:h-full bg-black/20 overflow-hidden flex items-center justify-center">
-                            {project.image_url ? (
+                            {displayImage ? (
                                 <>
                                     {/* Blurred Background for Fitting */}
                                     <img
-                                        src={project.image_url}
+                                        src={displayImage}
                                         alt=""
                                         referrerPolicy="no-referrer"
                                         className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-30 scale-110"
-                                        onError={(e) => handleImageError(e, project.image_url)}
+                                        onError={handleImageError}
                                     />
                                     {/* Main Image */}
                                     <img
-                                        src={project.image_url}
+                                        src={displayImage}
                                         alt={project.title}
                                         referrerPolicy="no-referrer"
                                         className="relative z-10 w-full h-full object-contain shadow-2xl"
-                                        onError={(e) => handleImageError(e, project.image_url)}
+                                        onError={handleImageError}
                                     />
                                 </>
                             ) : (

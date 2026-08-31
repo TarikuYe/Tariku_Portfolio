@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Mail, Github, Linkedin, Twitter, Loader2 } from 'lucide-react';
+import { Send, Loader2, ArrowUpRight } from 'lucide-react';
 
 const Contact = () => {
     const formRef = useRef();
@@ -38,121 +38,147 @@ const Contact = () => {
     };
 
     return (
-        <section id="contact" className="section-padding bg-dark-darker relative overflow-hidden">
-            <div className="absolute inset-0 glow-mesh opacity-20" />
-
-            <div className="container mx-auto relative z-10">
-                <div className="max-w-4xl mx-auto text-center mb-20">
+        <section id="contact" className="py-24 bg-[#060a12] text-white relative">
+            <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-7xl">
+                {/* Headline Header */}
+                <div className="text-center mb-16 max-w-3xl mx-auto">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-5xl md:text-7xl font-bold mb-8 leading-tight"
+                        transition={{ duration: 0.6 }}
+                        className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 leading-tight"
                     >
-                        Let's build an intelligent solution <span className="text-gradient underline decoration-primary/30 underline-offset-8">together.</span>
+                        Let's build an intelligent solution <span className="text-emerald-400">together.</span>
                     </motion.h2>
                     <motion.p
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: 0.2 }}
-                        className="text-xl text-slate-400"
+                        transition={{ duration: 0.6, delay: 0.1 }}
+                        className="text-slate-400 text-base md:text-lg"
                     >
-                        Ready to elevate your digital presence? Reach out now.
+                        Ready to elevate your digital presence? Send a message.
                     </motion.p>
                 </div>
 
-                <div className="grid lg:grid-cols-2 gap-16 items-start max-w-6xl mx-auto">
+                {/* 2 Column Contact Layout */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start max-w-6xl mx-auto">
+                    {/* Left Column: Form */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="glass-card p-10"
+                        className="lg:col-span-7 bg-[#0b1322] border border-slate-800 rounded-3xl p-8 md:p-10"
                     >
-                        <form ref={formRef} onSubmit={handleSubmit} className="space-y-8">
-                            <div className="grid md:grid-cols-2 gap-6">
+                        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Full Name</label>
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">YOUR NAME</label>
                                     <input
                                         type="text"
                                         name="name"
                                         required
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 focus:outline-none focus:border-primary transition-colors text-white"
-                                        placeholder="John Doe"
+                                        className="w-full bg-[#121c2e] border border-slate-700/80 rounded-xl px-5 py-3.5 text-white focus:outline-none focus:border-emerald-400 transition-colors text-sm"
+                                        placeholder="Alex Doe"
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Email Address</label>
+                                    <label className="text-xs font-bold uppercase tracking-widest text-slate-400">EMAIL ADDRESS</label>
                                     <input
                                         type="email"
                                         name="email"
                                         required
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 focus:outline-none focus:border-primary transition-colors text-white"
-                                        placeholder="johndoe@gmail.com"
+                                        className="w-full bg-[#121c2e] border border-slate-700/80 rounded-xl px-5 py-3.5 text-white focus:outline-none focus:border-emerald-400 transition-colors text-sm"
+                                        placeholder="alex@example.com"
                                     />
                                 </div>
                             </div>
+
                             <div className="space-y-2">
-                                <label className="text-xs font-bold uppercase tracking-widest text-slate-500">Your Message</label>
+                                <label className="text-xs font-bold uppercase tracking-widest text-slate-400">YOUR MESSAGE</label>
                                 <textarea
                                     name="message"
                                     required
                                     rows="5"
-                                    className="w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 focus:outline-none focus:border-primary transition-colors text-white resize-none"
+                                    className="w-full bg-[#121c2e] border border-slate-700/80 rounded-xl px-5 py-3.5 text-white focus:outline-none focus:border-emerald-400 transition-colors text-sm resize-none"
                                     placeholder="Tell me about your project..."
                                 ></textarea>
                             </div>
+
                             <button
                                 type="submit"
                                 disabled={loading}
-                                className="w-full py-5 bg-primary hover:bg-primary/80 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-3 group"
+                                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 active:scale-95 text-sm uppercase tracking-wider"
                             >
-                                {loading ? <Loader2 className="animate-spin" /> : <Send size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />}
+                                {loading ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} />}
                                 {loading ? 'SENDING...' : 'SEND MESSAGE'}
                             </button>
+
                             {success && (
-                                <p className="text-primary text-center text-sm font-medium">Message sent! I'll be in touch shortly.</p>
+                                <p className="text-emerald-400 text-center text-sm font-semibold pt-2">
+                                    Message sent successfully! I will reply shortly.
+                                </p>
                             )}
                         </form>
                     </motion.div>
 
-                    <div className="space-y-12">
-                        <div>
-                            <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-primary mb-6">Contact Info</h3>
-                            <a href="mailto:tarikunegesa19@gmail.com" className="text-3xl md:text-4xl font-light hover:text-primary transition-colors break-words">
-                                tarikunegesa19@gmail.com
-                            </a>
-                            <br />
-                            <br />
-                            <a href="tel:+251919421910" className="text-3xl md:text-4xl font-light hover:text-primary transition-colors break-words">
-                                +251919421910
-                            </a>
-                            <br />
-                            <br />
-                            <a href="#" className="text-3xl md:text-4xl font-light hover:text-primary transition-colors break-words">
-                                Addis Ababa, Ethiopia
-                            </a>
+                    {/* Right Column: Direct Info */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        className="lg:col-span-5 bg-[#0b1322] border border-slate-800 rounded-3xl p-8 md:p-10 flex flex-col justify-between h-full space-y-10"
+                    >
+                        <div className="space-y-8">
+                            <span className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest rounded-lg">
+                                [Contact Info]
+                            </span>
+
+                            <div>
+                                <a
+                                    href="mailto:tarikunegesa19@gmail.com"
+                                    className="text-xl md:text-2xl font-bold text-white hover:text-emerald-400 transition-colors block break-words"
+                                >
+                                    tarikunegesa19@gmail.com
+                                </a>
+                            </div>
+
+                            <div>
+                                <a
+                                    href="tel:+251919421910"
+                                    className="text-xl md:text-2xl font-bold text-white hover:text-emerald-400 transition-colors block"
+                                >
+                                    +251919421910
+                                </a>
+                                <p className="text-slate-400 text-sm mt-1">Addis Ababa, Ethiopia</p>
+                            </div>
                         </div>
 
                         <div>
-                            <h3 className="text-xs font-bold uppercase tracking-[0.3em] text-secondary mb-6">Follow Me</h3>
-                            <div className="flex gap-6">
-                                {[
-                                    { icon: Linkedin, href: "https://www.linkedin.com/in/tarikunegesa" },
-                                    { icon: Github, href: "https://github.com/TarikuYe" },
-                                    // { icon: Instagram, href: "#" }
-                                ].map((social, i) => (
-                                    <a
-                                        key={i}
-                                        href={social.href}
-                                        className="w-14 h-14 rounded-full border border-white/10 flex items-center justify-center hover:bg-white/5 hover:border-primary transition-all text-slate-400 hover:text-white"
-                                    >
-                                        <social.icon size={24} />
-                                    </a>
-                                ))}
+                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">FOLLOW ME</h4>
+                            <div className="flex gap-3">
+                                <a
+                                    href="https://github.com/TarikuYe"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-4 py-2 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5"
+                                >
+                                    <span>GH</span>
+                                    <ArrowUpRight size={14} />
+                                </a>
+                                <a
+                                    href="https://www.linkedin.com/in/tarikunegesa"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-4 py-2 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5"
+                                >
+                                    <span>LI</span>
+                                    <ArrowUpRight size={14} />
+                                </a>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </section>

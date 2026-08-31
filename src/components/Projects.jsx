@@ -1,6 +1,7 @@
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Github, ExternalLink, X, ArrowUpRight, Loader2, Download, ShoppingBag } from 'lucide-react';
+import { ArrowUpRight, X, ExternalLink, Github } from 'lucide-react';
+import { initialProjects } from '../data/portfolio';
 
 const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui, sans-serif' font-size='22' font-weight='600' fill='%2310b981'%3EProject Preview%3C/text%3E%3C/svg%3E";
 
@@ -20,24 +21,27 @@ const handleImageError = (e) => {
 
 const ProjectCard = ({ project, onClick }) => {
     const displayImage = getDisplayImageUrl(project.image_url);
+    const tags = (project.tech_stack || '').split(',').filter(Boolean);
 
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="group glass-card overflow-hidden cursor-pointer flex flex-col h-full rounded-3xl"
+            transition={{ duration: 0.6 }}
+            className="group bg-[#0b1322] border border-slate-800/90 rounded-3xl overflow-hidden cursor-pointer flex flex-col h-full hover:border-emerald-500/40 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/5"
             onClick={() => onClick(project)}
         >
-            <div className="relative h-64 overflow-hidden bg-white/5">
+            {/* Image Preview Banner */}
+            <div className="relative h-64 md:h-72 overflow-hidden bg-slate-900">
                 {displayImage ? (
                     <img
                         src={displayImage}
                         alt={project.title}
                         referrerPolicy="no-referrer"
                         loading="lazy"
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
                         onError={handleImageError}
                     />
                 ) : (
@@ -45,25 +49,35 @@ const ProjectCard = ({ project, onClick }) => {
                         No Preview Available
                     </div>
                 )}
-                <div className="absolute inset-0 bg-dark-darker/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
-                    <div className="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-full">
-                        <ArrowUpRight className="text-white" size={32} />
+                <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
+                    <div className="bg-emerald-500 text-slate-950 p-4 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <ArrowUpRight size={24} className="stroke-[3]" />
                     </div>
                 </div>
             </div>
 
-            <div className="p-8 flex-grow flex flex-col">
-                <div className="flex gap-2 mb-4">
-                    {project.tech_stack.split(',').slice(0, 3).map((tech, i) => (
-                        <span key={i} className="text-[10px] uppercase tracking-widest font-bold text-primary bg-primary/10 px-2 py-1 rounded-md">
-                            {tech.trim()}
-                        </span>
-                    ))}
+            {/* Card Content Body */}
+            <div className="p-8 flex-grow flex flex-col justify-between">
+                <div>
+                    {/* Tech Stack Pills */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {tags.map((tech, i) => (
+                            <span key={i} className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
+                                {tech.trim()}
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors leading-tight">
+                        {project.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-slate-400 text-sm leading-relaxed line-clamp-3">
+                        {project.description}
+                    </p>
                 </div>
-                <h3 className="text-2xl font-bold mb-3 group-hover:text-primary transition-colors">{project.title}</h3>
-                <p className="text-slate-400 text-sm mb-6 leading-relaxed line-clamp-3">
-                    {project.description}
-                </p>
             </div>
         </motion.div>
     );
@@ -72,6 +86,7 @@ const ProjectCard = ({ project, onClick }) => {
 const ProjectModal = ({ project, isOpen, onClose }) => {
     if (!isOpen || !project) return null;
     const displayImage = getDisplayImageUrl(project.image_url);
+    const tags = (project.tech_stack || '').split(',').filter(Boolean);
 
     return (
         <AnimatePresence>
@@ -79,105 +94,73 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-dark-darker/95 backdrop-blur-xl"
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-slate-950/90 backdrop-blur-xl"
                 onClick={onClose}
             >
                 <motion.div
-                    initial={{ y: 50, opacity: 0, scale: 0.9 }}
+                    initial={{ y: 50, opacity: 0, scale: 0.95 }}
                     animate={{ y: 0, opacity: 1, scale: 1 }}
-                    exit={{ y: 50, opacity: 0, scale: 0.9 }}
+                    exit={{ y: 50, opacity: 0, scale: 0.95 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-dark-lighter w-full max-w-6xl rounded-[40px] overflow-hidden shadow-2xl relative max-h-full overflow-y-auto border border-white/5"
+                    className="bg-[#0b1322] w-full max-w-5xl rounded-[32px] overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto border border-slate-800"
                 >
                     <button
                         onClick={onClose}
-                        className="absolute top-8 right-8 p-3 bg-white/5 hover:bg-white/10 text-white rounded-full transition-all z-20 border border-white/10"
+                        className="absolute top-6 right-6 p-3 bg-slate-800/60 hover:bg-slate-700 text-white rounded-full transition-all z-20"
                     >
-                        <X size={24} />
+                        <X size={20} />
                     </button>
 
-                    <div className="grid lg:grid-cols-2 h-full min-h-[600px]">
-                        <div className="relative h-80 lg:h-full bg-black/20 overflow-hidden flex items-center justify-center">
+                    <div className="grid lg:grid-cols-2 h-full">
+                        <div className="relative h-72 lg:h-full bg-slate-950 overflow-hidden flex items-center justify-center">
                             {displayImage ? (
-                                <>
-                                    {/* Blurred Background for Fitting */}
-                                    <img
-                                        src={displayImage}
-                                        alt=""
-                                        referrerPolicy="no-referrer"
-                                        className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-30 scale-110"
-                                        onError={handleImageError}
-                                    />
-                                    {/* Main Image */}
-                                    <img
-                                        src={displayImage}
-                                        alt={project.title}
-                                        referrerPolicy="no-referrer"
-                                        className="relative z-10 w-full h-full object-contain shadow-2xl"
-                                        onError={handleImageError}
-                                    />
-                                </>
+                                <img
+                                    src={displayImage}
+                                    alt={project.title}
+                                    referrerPolicy="no-referrer"
+                                    className="w-full h-full object-cover"
+                                    onError={handleImageError}
+                                />
                             ) : (
                                 <div className="text-slate-500 font-medium">No Image Provided</div>
                             )}
-                            <div className="absolute inset-0 bg-gradient-to-r from-dark-lighter/10 to-transparent pointer-events-none"></div>
                         </div>
 
-                        <div className="p-8 md:p-16 flex flex-col">
-                            <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">{project.title}</h2>
+                        <div className="p-8 md:p-12 flex flex-col justify-between">
+                            <div>
+                                <div className="flex flex-wrap gap-2 mb-6">
+                                    {tags.map((tech, i) => (
+                                        <span key={i} className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold rounded-lg uppercase tracking-wider">
+                                            {tech.trim()}
+                                        </span>
+                                    ))}
+                                </div>
 
-                            <div className="flex flex-wrap gap-3 mb-10">
-                                {project.tech_stack.split(',').map((tech, i) => (
-                                    <span key={i} className="px-4 py-2 bg-white/5 border border-white/10 text-xs font-medium rounded-xl text-slate-300">
-                                        {tech.trim()}
-                                    </span>
-                                ))}
+                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">{project.title}</h2>
+                                <p className="text-slate-300 text-base leading-relaxed mb-8">{project.description}</p>
                             </div>
 
-                            <p className="text-slate-400 text-lg leading-relaxed mb-12 flex-grow">
-                                {project.description}
-                            </p>
-
-                            <div className="flex flex-wrap gap-4 mt-auto">
-                                {project.source_url && (
-                                    <a
-                                        href={project.source_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className={`flex-1 min-w-[220px] py-5 rounded-2xl flex items-center justify-center gap-3 transition-all font-bold tracking-widest text-xs uppercase shadow-xl ${parseFloat(project.price) > 0
-                                            ? 'bg-accent text-white shadow-accent/20 hover:bg-accent/80'
-                                            : 'bg-primary text-white shadow-primary/20 hover:bg-primary/80'
-                                            }`}
-                                    >
-                                        {parseFloat(project.price) > 0 ? (
-                                            <>
-                                                <ShoppingBag size={20} /> Buy Project - ${project.price}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Download size={20} /> Free Download
-                                            </>
-                                        )}
-                                    </a>
-                                )}
+                            <div className="flex flex-wrap gap-4 pt-6 border-t border-slate-800">
                                 {project.github_url && (
                                     <a
                                         href={project.github_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex-1 min-w-[220px] py-5 bg-[#24292e] hover:bg-[#2f363d] text-white rounded-2xl flex items-center justify-center gap-3 transition-all font-bold tracking-widest text-xs uppercase shadow-xl shadow-black/20"
+                                        className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl flex items-center gap-2 text-sm transition-all"
                                     >
-                                        <Github size={20} /> View Source
+                                        <Github size={18} />
+                                        <span>GitHub Repository</span>
                                     </a>
                                 )}
-                                {project.demo_url && (
+                                {project.demo_url && project.demo_url !== '#' && (
                                     <a
                                         href={project.demo_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex-1 min-w-[220px] py-5 bg-white/5 border border-white/10 text-white rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 transition-all font-bold tracking-widest text-xs uppercase"
+                                        className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl flex items-center gap-2 text-sm transition-all"
                                     >
-                                        <ExternalLink size={20} /> Live Preview
+                                        <ExternalLink size={18} />
+                                        <span>Live Demo</span>
                                     </a>
                                 )}
                             </div>
@@ -192,94 +175,66 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
 const Projects = () => {
     const [projects, setProjects] = useState([]);
     const [selectedProject, setSelectedProject] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    const trackView = async (id) => {
-        try {
-            await fetch(`/api/projects/${id}/view`, { method: 'POST' });
-        } catch (error) {
-            console.error('Error tracking view:', error);
-        }
-    };
-
-    const handleProjectClick = (project) => {
-        setSelectedProject(project);
-        trackView(project.id);
-    };
 
     useEffect(() => {
         const fetchProjects = async () => {
             try {
                 const response = await fetch('/api/projects');
-                if (!response.ok) {
-                    console.error('Server error fetching projects');
-                    return;
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && data.length > 0) {
+                        setProjects(data);
+                        return;
+                    }
                 }
-                const data = await response.json();
-                if (Array.isArray(data)) {
-                    setProjects(data);
-                }
-            } catch (error) {
-                console.error('Fetch projects error:', error);
-            } finally {
-                setLoading(false);
+            } catch (err) {
+                console.error('Fetch projects error:', err);
             }
+            setProjects(initialProjects);
         };
-
         fetchProjects();
-        const interval = setInterval(fetchProjects, 10000); // Poll every 10s
-        return () => clearInterval(interval);
     }, []);
 
+    const displayList = projects.length > 0 ? projects : initialProjects;
+
     return (
-        <section id="work" className="section-padding bg-dark relative overflow-hidden">
-            <div className="container mx-auto">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8"
-                >
-                    <div className="max-w-2xl">
-                        <h2 className="text-5xl md:text-7xl font-bold mb-6 tracking-tighter">Featured <span className="text-gradient underline decoration-primary/20 underline-offset-8">Projects.</span></h2>
-                        <p className="text-slate-400 text-lg leading-relaxed font-light">
+        <section id="work" className="py-24 bg-[#060a12] text-white relative">
+            <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-7xl">
+                {/* Section Header */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+                    <div>
+                        <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-4">
+                            Featured <span className="text-emerald-400">Projects.</span>
+                        </h2>
+                        <p className="text-slate-400 text-base md:text-lg max-w-xl">
                             Showcasing my best work from the dashboard. Everything you see here is updated in real-time.
                         </p>
                     </div>
-                </motion.div>
 
-                {loading ? (
-                    <div className="flex justify-center py-20">
-                        <Loader2 className="animate-spin text-primary" size={48} />
+                    <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/20">
+                        <ArrowUpRight size={24} className="stroke-[3]" />
                     </div>
-                ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-                        <AnimatePresence mode="popLayout">
-                            {projects.map(project => (
-                                <ProjectCard
-                                    key={project.id}
-                                    project={project}
-                                    onClick={handleProjectClick}
-                                />
-                            ))}
-                        </AnimatePresence>
-                    </div>
-                )}
+                </div>
+
+                {/* 2x2 Projects Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+                    {displayList.map((project) => (
+                        <ProjectCard
+                            key={project.id}
+                            project={project}
+                            onClick={(p) => setSelectedProject(p)}
+                        />
+                    ))}
+                </div>
             </div>
 
-            {selectedProject && (
-                <ProjectModal
-                    project={selectedProject}
-                    isOpen={!!selectedProject}
-                    onClose={() => setSelectedProject(null)}
-                />
-            )}
-
-            {/* Background Accent */}
-            <div className="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-secondary/5 blur-[120px] rounded-full -z-10" />
+            <ProjectModal
+                project={selectedProject}
+                isOpen={!!selectedProject}
+                onClose={() => setSelectedProject(null)}
+            />
         </section>
     );
 };
 
 export default Projects;
-

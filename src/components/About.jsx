@@ -3,85 +3,105 @@ import { aboutMe } from '../data/portfolio';
 
 const About = () => {
     return (
-        <section id="about" className="section-padding bg-dark-darker relative">
-            <div className="container mx-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <section id="about" className="py-24 bg-[#060a12] text-white relative">
+            <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-7xl">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                    {/* Left Column: About Story & Stat */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
+                        className="lg:col-span-6 space-y-8"
                     >
-                        <h2 className="text-4xl md:text-5xl font-bold mb-8 italic">About <span className="text-gradient">Me</span></h2>
-                        <div className="space-y-6 text-xl text-slate-400 leading-relaxed font-light">
-                            <p>
-                                I’m a full-stack developer who thrives at the intersection of design and engineering. With 1+ years of experience in the React ecosystem, I build clean, scalable, and maintainable applications that deliver real-world impact and exceptional user experiences.
-                            </p>
-                            <p>
-                                I believe great software is more than just code—it’s an experience. My approach combines rigorous engineering principles with a designer’s eye for detail. I specialize in transforming complex system and AI model outputs into intuitive, user-friendly interfaces while ensuring every solution is scalable, ethical, and performance-driven.
-                            </p>
+                        <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">
+                            About <span className="text-emerald-400">Me</span>
+                        </h2>
+
+                        <div className="space-y-6 text-slate-300 text-base md:text-lg leading-relaxed font-normal">
+                            <p>{aboutMe.bio1}</p>
+                            <p>{aboutMe.bio2}</p>
                         </div>
 
-                        <div className="mt-12 grid grid-cols-2 gap-8">
-                            <div className="glass-card p-6">
-                                <span className="block text-4xl font-bold text-primary mb-2">1+</span>
-                                <span className="text-sm text-slate-500 uppercase tracking-widest">Year Experience</span>
+                        {/* Experience Stat Card */}
+                        <div className="pt-4">
+                            <div className="inline-block bg-[#0b1322] border border-slate-800 rounded-3xl p-6 md:p-8 min-w-[200px]">
+                                <span className="block text-4xl md:text-5xl font-extrabold text-emerald-400 mb-1">
+                                    {aboutMe.yearsExperience}
+                                </span>
+                                <span className="text-xs uppercase tracking-widest font-bold text-slate-400">
+                                    YEARS EXPERIENCE
+                                </span>
                             </div>
-                            {/* <div className="glass-card p-6">
-                                <span className="block text-4xl font-bold text-secondary mb-2"></span>
-                                <span className="text-sm text-slate-500 uppercase tracking-widest">Global Clients</span>
-                            </div> */}
                         </div>
                     </motion.div>
 
+                    {/* Right Column: Technical Toolkit & Education */}
                     <motion.div
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.8 }}
-                        className="bg-dark-lighter/50 rounded-3xl p-10 border border-white/5 relative overflow-hidden"
+                        className="lg:col-span-6 bg-[#0b1322] border border-slate-800 rounded-3xl p-8 md:p-10 space-y-10"
                     >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full" />
-
-                        <div className="space-y-12">
-                            <section>
-                                <h3 className="text-2xl font-bold mb-8">Technical Toolkit</h3>
-                                <div className="space-y-8">
-                                    {Object.entries(aboutMe.toolkit).map(([category, items]) => (
-                                        <div key={category}>
-                                            <h4 className="text-primary text-xs font-bold uppercase tracking-[0.2em] mb-4 opacity-70">
-                                                {category}
-                                            </h4>
-                                            <div className="flex flex-wrap gap-3">
-                                                {items.map(item => (
-                                                    <span key={item} className="px-4 py-2 bg-white/5 rounded-xl text-slate-300 border border-white/5 text-sm hover:border-primary/30 transition-colors">
-                                                        {item}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    ))}
+                        {/* Technical Toolkit */}
+                        <div>
+                            <h3 className="text-xl md:text-2xl font-bold text-white mb-6">Technical Toolkit</h3>
+                            <div className="space-y-6">
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">LANGUAGES</h4>
+                                    <div className="flex flex-wrap gap-2.5">
+                                        {aboutMe.toolkit.languages.map((item) => (
+                                            <span key={item} className="px-3.5 py-1.5 bg-[#121c2e] border border-slate-700/80 rounded-lg text-slate-200 text-xs font-medium">
+                                                {item}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                            </section>
 
-                            <section className="pt-8 border-t border-white/5">
-                                <h3 className="text-2xl font-bold mb-8">Education</h3>
-                                <div className="space-y-6">
-                                    {aboutMe.education.map((edu, idx) => (
-                                        <div key={idx} className="group">
-                                            <h4 className="text-xl font-bold text-white mb-2 group-hover:text-primary transition-colors">
-                                                {edu.degree}
-                                            </h4>
-                                            <p className="text-slate-400 font-medium">
-                                                {edu.institution}
-                                            </p>
-                                            <p className="text-primary text-sm font-mono mt-2">
-                                                {edu.period}
-                                            </p>
-                                        </div>
-                                    ))}
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">FRONTEND</h4>
+                                    <div className="flex flex-wrap gap-2.5">
+                                        {aboutMe.toolkit.frontend.map((item) => (
+                                            <span key={item} className="px-3.5 py-1.5 bg-[#121c2e] border border-slate-700/80 rounded-lg text-slate-200 text-xs font-medium">
+                                                {item}
+                                            </span>
+                                        ))}
+                                    </div>
                                 </div>
-                            </section>
+
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">BACKEND</h4>
+                                    <div className="flex flex-wrap gap-2.5">
+                                        {aboutMe.toolkit.backend.map((item) => (
+                                            <span key={item} className="px-3.5 py-1.5 bg-[#121c2e] border border-slate-700/80 rounded-lg text-slate-200 text-xs font-medium">
+                                                {item}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">OTHER</h4>
+                                    <div className="flex flex-wrap gap-2.5">
+                                        {aboutMe.toolkit.other.map((item) => (
+                                            <span key={item} className="px-3.5 py-1.5 bg-[#121c2e] border border-slate-700/80 rounded-lg text-slate-200 text-xs font-medium">
+                                                {item}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Education */}
+                        <div className="pt-8 border-t border-slate-800">
+                            <h3 className="text-xl md:text-2xl font-bold text-white mb-4">Education</h3>
+                            <div>
+                                <h4 className="text-lg font-bold text-white mb-1">{aboutMe.education.degree}</h4>
+                                <p className="text-slate-400 text-sm font-medium">{aboutMe.education.institution}</p>
+                                <p className="text-emerald-400 text-xs font-semibold mt-2">{aboutMe.education.period}</p>
+                            </div>
                         </div>
                     </motion.div>
                 </div>

@@ -4,63 +4,37 @@ const TechStackStrip = () => {
     const techs = [
         "React",
         "Node.js",
-        "Firebase",
+        "PostgreSQL",
         "Python",
-        "AI/NLP",
+        "AI/ML",
         "Tailwind"
     ];
 
     return (
-        <section className="relative w-full bg-dark-darker py-10 border-y border-white/5 overflow-hidden">
-            <div className="container mx-auto px-6">
+        <section className="relative w-full bg-[#060a12] py-8 border-y border-slate-800/80 overflow-hidden">
+            <div className="container mx-auto px-6 max-w-7xl">
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 15 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="flex flex-wrap items-center justify-center gap-4 md:gap-x-12 gap-y-6"
+                    transition={{ duration: 0.6 }}
+                    className="flex flex-wrap items-center justify-start md:justify-start gap-3 md:gap-5"
                 >
                     {techs.map((tech, index) => (
                         <motion.div
                             key={tech}
-                            initial={{ opacity: 0, x: -20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            transition={{
-                                delay: 0.1 * index,
-                                duration: 0.5,
-                                ease: "easeOut"
-                            }}
-                            whileHover={{
-                                y: -5,
-                                transition: { duration: 0.2 }
-                            }}
-                            className="relative"
+                            transition={{ delay: index * 0.08, duration: 0.4 }}
+                            className="px-5 py-2 rounded-full bg-[#0e1626] border border-slate-800 text-slate-300 hover:text-white hover:border-emerald-500/50 hover:bg-emerald-500/10 transition-all duration-300 flex items-center gap-2.5 text-sm font-medium cursor-default"
                         >
-                            <div className="group px-6 py-2.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm 
-                                          hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 
-                                          flex items-center gap-3 cursor-default active:scale-95">
-                                {/* Glowing Bullet */}
-                                <div className="relative flex items-center justify-center">
-                                    <span className="w-2 h-2 rounded-full bg-primary" />
-                                    <span className="absolute w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
-                                </div>
-
-                                <span className="text-slate-300 group-hover:text-white font-medium tracking-wide transition-colors">
-                                    {tech}
-                                </span>
-
-                                {/* Subtle background glow on hover */}
-                                <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
-                            </div>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <span>{tech}</span>
                         </motion.div>
                     ))}
                 </motion.div>
             </div>
-
-            {/* Background decorative elements */}
-            <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-            <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         </section>
     );
 };

@@ -1,51 +1,33 @@
-import { Github, Linkedin, Twitter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
-        <footer className="bg-dark-darker border-t border-white/5 py-12 relative overflow-hidden">
-            <div className="container mx-auto px-6">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
-                    <div>
-                        <span className="text-2xl font-bold tracking-tighter text-white">
-                            Tariku<span className="text-primary">Negesa</span>
-                        </span>
-                        <p className="text-slate-500 mt-2 text-sm max-w-xs">
-                            Beautiful digital products with a focus on performance and accessibility.
-                        </p>
+        <footer className="bg-[#060a12] border-t border-slate-800/80 py-10 text-white relative">
+            <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-7xl">
+                <div className="flex flex-col md:flex-row justify-between items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                    {/* Brand */}
+                    <div className="text-sm font-bold text-white tracking-tight">
+                        Tariku<span className="text-emerald-400">Negesa</span>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        {[
-                            { icon: Linkedin, href: "https://www.linkedin.com/in/tarikunegesa" },
-                            { icon: Github, href: "https://github.com/TarikuYe" }
-                            // { icon: Twitter, href: "#" }
-                        ].map((social, i) => (
-                            <a
-                                key={i}
-                                href={social.href}
-                                className="w-10 h-10 rounded-lg border border-white/5 flex items-center justify-center text-slate-500 hover:text-primary hover:border-primary transition-all"
-                            >
-                                <social.icon size={18} />
-                            </a>
-                        ))}
+                    {/* Copyright */}
+                    <div className="text-center text-slate-500">
+                        &copy; 2026 TARIKU NEGESA. ALL RIGHTS RESERVED.
                     </div>
-                </div>
 
-                <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-slate-600">
-                    <p>&copy; 2026 Tariku Negesa. All rights reserved.</p>
-                    <div className="flex gap-8">
-                        <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
-                        <Link to="/terms-of-service" className="hover:text-white transition-colors">Terms of Service</Link>
+                    {/* Footer Links */}
+                    <div className="flex items-center gap-6">
+                        <Link to="/privacy-policy" className="hover:text-emerald-400 transition-colors">
+                            Privacy Policy
+                        </Link>
+                        <Link to="/terms-of-service" className="hover:text-emerald-400 transition-colors">
+                            Terms of Service
+                        </Link>
                     </div>
                 </div>
             </div>
-
-            {/* Ambient Glow */}
-            <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-full max-w-4xl h-40 bg-primary/5 blur-[100px] pointer-events-none" />
         </footer>
     );
 };
 
 export default Footer;
-

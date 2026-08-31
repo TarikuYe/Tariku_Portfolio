@@ -80,12 +80,17 @@ function getDbConnectionString() {
 
 const dbConnectionString = getDbConnectionString();
 
+function isLocalHost(urlStr) {
+    if (!urlStr) return true;
+    return urlStr.includes('localhost') || urlStr.includes('127.0.0.1');
+}
+
 // PostgreSQL Pool
 const pool = new Pool(
     dbConnectionString
         ? {
               connectionString: dbConnectionString,
-              ssl: { rejectUnauthorized: false }
+              ssl: isLocalHost(dbConnectionString) ? false : { rejectUnauthorized: false }
           }
         : {
               user: process.env.DB_USER,
@@ -93,6 +98,7 @@ const pool = new Pool(
               database: process.env.DB_NAME || 'portfolio_admin',
               password: process.env.DB_PASSWORD,
               port: process.env.DB_PORT || 5432,
+              ssl: isLocalHost(process.env.DB_HOST) ? false : { rejectUnauthorized: false },
               max: 20,
               idleTimeoutMillis: 30000,
               connectionTimeoutMillis: 2000,

@@ -8,7 +8,6 @@ import bcrypt from 'bcryptjs';
 import nodemailer from 'nodemailer';
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import path from 'path';
 
 dotenv.config();
@@ -49,12 +48,17 @@ function getDbConnectionString() {
 
 const dbConnectionString = getDbConnectionString();
 
+function isLocalHost(urlStr) {
+    if (!urlStr) return true;
+    return urlStr.includes('localhost') || urlStr.includes('127.0.0.1');
+}
+
 // PostgreSQL Pool Config
 const pool = new Pool(
     dbConnectionString
         ? {
               connectionString: dbConnectionString,
-              ssl: { rejectUnauthorized: false }
+              ssl: isLocalHost(dbConnectionString) ? false : { rejectUnauthorized: false }
           }
         : {
               user: process.env.DB_USER,
@@ -62,7 +66,7 @@ const pool = new Pool(
               database: process.env.DB_NAME || 'portfolio_admin',
               password: process.env.DB_PASSWORD,
               port: process.env.DB_PORT || 5432,
-              ssl: { rejectUnauthorized: false }
+              ssl: isLocalHost(process.env.DB_HOST) ? false : { rejectUnauthorized: false }
           }
 );
 

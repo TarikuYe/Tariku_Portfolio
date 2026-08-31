@@ -62,18 +62,43 @@ const diskStorage = multer.diskStorage({
 });
 const diskUpload = multer({ storage: diskStorage });
 
+// PostgreSQL Connection Helper (Strips sslmode query parameter to prevent SSL verification overrides)
+function getDbConnectionString() {
+    const rawUrl = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (rawUrl) {
+        try {
+            const parsed = new URL(rawUrl);
+            parsed.searchParams.delete('sslmode');
+            parsed.searchParams.delete('supa');
+            return parsed.toString();
+        } catch (e) {
+            return rawUrl;
+        }
+    }
+    return null;
+}
+
+const dbConnectionString = getDbConnectionString();
+
 // PostgreSQL Pool
-const pool = new Pool({
-    user: process.env.DB_USER,
-    host: process.env.DB_HOST,
-    database: process.env.DB_NAME || 'portfolio_admin',
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT || 5432,
-    max: 20,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
-    keepAlive: true
-});
+const pool = new Pool(
+    dbConnectionString
+        ? {
+              connectionString: dbConnectionString,
+              ssl: { rejectUnauthorized: false }
+          }
+        : {
+              user: process.env.DB_USER,
+              host: process.env.DB_HOST,
+              database: process.env.DB_NAME || 'portfolio_admin',
+              password: process.env.DB_PASSWORD,
+              port: process.env.DB_PORT || 5432,
+              max: 20,
+              idleTimeoutMillis: 30000,
+              connectionTimeoutMillis: 2000,
+              keepAlive: true
+          }
+);
 
 // Test DB Connection & Error Handling
 pool.on('error', (err) => {

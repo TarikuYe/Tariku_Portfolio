@@ -6,6 +6,15 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
+const getDisplayImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('/')) return url;
+    if (url.includes('res.cloudinary.com')) {
+        return `/api/proxy-image?url=${encodeURIComponent(url)}`;
+    }
+    return url;
+};
+
 const PostModal = ({ post, isOpen, onClose }) => {
     if (!isOpen || !post) return null;
 
@@ -51,7 +60,7 @@ const PostModal = ({ post, isOpen, onClose }) => {
 
                         {(post.image_url || post.imageUrl) && (
                             <div className="w-full h-64 md:h-96 rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl">
-                                <img src={post.image_url || post.imageUrl} alt={post.title} className="w-full h-full object-cover" />
+                                <img src={getDisplayImageUrl(post.image_url || post.imageUrl)} alt={post.title} className="w-full h-full object-cover" />
                             </div>
                         )}
 
@@ -156,7 +165,7 @@ const Blogs = () => {
                                 >
                                     {article.imageUrl && (
                                         <div className="h-48 w-full rounded-2xl overflow-hidden mb-6 border border-white/10 bg-black/40">
-                                            <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <img src={getDisplayImageUrl(article.imageUrl)} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         </div>
                                     )}
                                     <span className="text-sm text-primary mb-4 block font-mono">{article.date}</span>

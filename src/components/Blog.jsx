@@ -5,6 +5,15 @@ import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 import { initialBlogPosts } from '../data/portfolio';
 
+const getDisplayImageUrl = (url) => {
+    if (!url) return '';
+    if (url.startsWith('data:') || url.startsWith('/')) return url;
+    if (url.includes('res.cloudinary.com')) {
+        return `/api/proxy-image?url=${encodeURIComponent(url)}`;
+    }
+    return url;
+};
+
 const PostModal = ({ post, isOpen, onClose }) => {
     if (!isOpen || !post) return null;
 
@@ -50,7 +59,7 @@ const PostModal = ({ post, isOpen, onClose }) => {
 
                         {(post.image_url || post.imageUrl) && (
                             <div className="w-full h-64 md:h-80 rounded-2xl overflow-hidden mb-8 border border-slate-800 shadow-xl">
-                                <img src={post.image_url || post.imageUrl} alt={post.title} className="w-full h-full object-cover" />
+                                <img src={getDisplayImageUrl(post.image_url || post.imageUrl)} alt={post.title} className="w-full h-full object-cover" />
                             </div>
                         )}
 
@@ -133,7 +142,7 @@ const Blog = () => {
                                     {/* Cover Image Banner */}
                                     <div className="h-44 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-slate-900 border border-slate-800 mb-6 flex items-center justify-center overflow-hidden group-hover:border-emerald-500/30 transition-colors">
                                         {(article.image_url || article.imageUrl) ? (
-                                            <img src={article.image_url || article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <img src={getDisplayImageUrl(article.image_url || article.imageUrl)} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                                         ) : (
                                             <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
                                                 <ArrowRight size={20} />

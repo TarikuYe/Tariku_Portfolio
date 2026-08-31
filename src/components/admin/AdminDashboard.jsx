@@ -720,7 +720,7 @@ const BlogEditor = () => {
                         </div>
                         {imageUrl && (
                             <div className="relative w-full max-w-sm h-40 rounded-xl overflow-hidden border border-white/10 mt-3 bg-black/40 shadow-inner">
-                                <img src={imageUrl} alt="Blog cover preview" className="w-full h-full object-cover" />
+                                <img src={getDisplayImageUrl(imageUrl)} alt="Blog cover preview" className="w-full h-full object-cover" />
                                 <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-[10px] text-slate-300 font-mono">
                                     Cover Preview
                                 </div>
@@ -733,7 +733,7 @@ const BlogEditor = () => {
                             <div className="p-8 prose prose-invert max-w-none text-slate-300 overflow-y-auto">
                                 {imageUrl && (
                                     <div className="w-full max-h-80 rounded-2xl overflow-hidden mb-6 border border-white/10 shadow-lg">
-                                        <img src={imageUrl} alt="Featured cover" className="w-full h-full object-cover" />
+                                        <img src={getDisplayImageUrl(imageUrl)} alt="Featured cover" className="w-full h-full object-cover" />
                                     </div>
                                 )}
                                 <ReactMarkdown>{markdown}</ReactMarkdown>
@@ -800,7 +800,7 @@ const BlogEditor = () => {
                             <div>
                                 {(post.image_url || post.imageUrl) && (
                                     <div className="w-full h-40 rounded-xl overflow-hidden mb-4 border border-white/10 bg-black/40">
-                                        <img src={post.image_url || post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                        <img src={getDisplayImageUrl(post.image_url || post.imageUrl)} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                                     </div>
                                 )}
                                 <div className="flex justify-between items-start mb-4">

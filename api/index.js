@@ -26,13 +26,93 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
 
-// PostgreSQL Pool
-const pool = new Pool({
-    connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
+// PostgreSQL Connection Helper (Strips sslmode query parameter to prevent SSL verification overrides)
+function getDbConnectionString() {
+    const rawUrl = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL;
+    if (rawUrl) {
+        try {
+            const parsed = new URL(rawUrl);
+            parsed.searchParams.delete('sslmode');
+            parsed.searchParams.delete('supa');
+            return parsed.toString();
+        } catch (e) {
+            return rawUrl;
+        }
     }
-});
+
+    if (process.env.POSTGRES_HOST && process.env.POSTGRES_USER) {
+        return `postgres://${encodeURIComponent(process.env.POSTGRES_USER)}:${encodeURIComponent(process.env.POSTGRES_PASSWORD || '')}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT || 5432}/${process.env.POSTGRES_DATABASE || 'postgres'}`;
+    }
+
+    return null;
+}
+
+const dbConnectionString = getDbConnectionString();
+
+// PostgreSQL Pool Config
+const pool = new Pool(
+    dbConnectionString
+        ? {
+              connectionString: dbConnectionString,
+              ssl: { rejectUnauthorized: false }
+          }
+        : {
+              user: process.env.DB_USER,
+              host: process.env.DB_HOST,
+              database: process.env.DB_NAME || 'portfolio_admin',
+              password: process.env.DB_PASSWORD,
+              port: process.env.DB_PORT || 5432,
+              ssl: { rejectUnauthorized: false }
+          }
+);
+
+// Auto-migration helper to ensure tables exist on Supabase
+let tablesMigrated = false;
+const ensureTablesExist = async () => {
+    if (tablesMigrated) return;
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS projects (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                description TEXT,
+                image_url TEXT,
+                tech_stack TEXT,
+                source_url TEXT,
+                demo_url TEXT,
+                github_url TEXT,
+                price DECIMAL(10, 2) DEFAULT 0.00,
+                views INTEGER DEFAULT 0,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS blog_posts (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                content TEXT NOT NULL,
+                published_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS messages (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                message TEXT NOT NULL,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS comments (
+                id SERIAL PRIMARY KEY,
+                post_id INTEGER REFERENCES blog_posts(id),
+                name VARCHAR(255),
+                content TEXT,
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+            );
+            ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS published_date DATE DEFAULT CURRENT_DATE;
+        `);
+        tablesMigrated = true;
+    } catch (err) {
+        console.error('Auto-migration error:', err.message);
+    }
+};
 
 // Nodemailer Transporter
 const transporter = nodemailer.createTransport({
@@ -43,10 +123,11 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Health Check
+// Health Check Endpoint
 app.get('/api/health', async (req, res) => {
     try {
         await pool.query('SELECT 1');
+        await ensureTablesExist();
         res.json({ status: 'active', database: 'connected', timestamp: new Date() });
     } catch (err) {
         console.error('Health check database error:', err.message);

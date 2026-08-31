@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Loader2, ArrowUpRight } from 'lucide-react';
+import { Send, Loader2, ArrowUpRight, Github, Linkedin, Instagram } from 'lucide-react';
 
 const Contact = () => {
     const formRef = useRef();
@@ -157,24 +157,39 @@ const Contact = () => {
 
                         <div>
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">FOLLOW ME</h4>
-                            <div className="flex gap-3">
+                            <div className="flex flex-wrap gap-3">
                                 <a
                                     href="https://github.com/TarikuYe"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="px-4 py-2 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5"
+                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-2 group"
+                                    title="GitHub"
                                 >
-                                    <span>GH</span>
-                                    <ArrowUpRight size={14} />
+                                    <Github size={16} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
+                                    <span>GitHub</span>
+                                    <ArrowUpRight size={14} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
                                 </a>
                                 <a
                                     href="https://www.linkedin.com/in/tarikunegesa"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="px-4 py-2 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5"
+                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-2 group"
+                                    title="LinkedIn"
                                 >
-                                    <span>LI</span>
-                                    <ArrowUpRight size={14} />
+                                    <Linkedin size={16} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
+                                    <span>LinkedIn</span>
+                                    <ArrowUpRight size={14} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                                </a>
+                                <a
+                                    href="https://www.instagram.com/taiku_et"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-2 group"
+                                    title="Instagram @taiku_et"
+                                >
+                                    <Instagram size={16} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
+                                    <span>@taiku_et</span>
+                                    <ArrowUpRight size={14} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
                                 </a>
                             </div>
                         </div>

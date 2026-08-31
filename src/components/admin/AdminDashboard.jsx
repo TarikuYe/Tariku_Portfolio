@@ -15,7 +15,9 @@ import {
     Send,
     X,
     Menu,
-    Github
+    Github,
+    Upload,
+    Image
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
@@ -486,6 +488,8 @@ const BlogEditor = () => {
     const [title, setTitle] = useState('');
     const [publishedDate, setPublishedDate] = useState(new Date().toISOString().split('T')[0]);
     const [markdown, setMarkdown] = useState('# New Blog Post\n\nWrite your content here...');
+    const [imageUrl, setImageUrl] = useState('');
+    const [uploadingImage, setUploadingImage] = useState(false);
     const [preview, setPreview] = useState(false);
     const [publishing, setPublishing] = useState(false);
     const [status, setStatus] = useState({ type: '', message: '' });
@@ -511,11 +515,54 @@ const BlogEditor = () => {
         fetchPosts();
     }, []);
 
+    const handleImageUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        if (file.size > 4.5 * 1024 * 1024) {
+            setStatus({ type: 'error', message: 'Image size must be under 4.5 MB.' });
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', file);
+
+        setUploadingImage(true);
+        setStatus({ type: '', message: '' });
+
+        try {
+            const response = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonErr) {
+                throw new Error(`Server returned HTTP ${response.status} non-JSON response.`);
+            }
+
+            if (response.ok && data.imageUrl) {
+                setImageUrl(data.imageUrl);
+                setStatus({ type: 'success', message: 'Image uploaded successfully!' });
+            } else {
+                setStatus({ type: 'error', message: data.message || data.error || 'Image upload failed.' });
+            }
+        } catch (error) {
+            console.error('Blog image upload failed:', error);
+            setStatus({ type: 'error', message: error.message || 'Network error during image upload.' });
+        } finally {
+            setUploadingImage(false);
+        }
+    };
+
     const handleEdit = (post) => {
         setEditingId(post.id);
         setTitle(post.title);
         setMarkdown(post.content);
-        setPublishedDate(new Date(post.display_date).toISOString().split('T')[0]);
+        setImageUrl(post.image_url || post.imageUrl || '');
+        setPublishedDate(post.display_date ? new Date(post.display_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
         setPreview(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -524,6 +571,7 @@ const BlogEditor = () => {
         setEditingId(null);
         setTitle('');
         setMarkdown('# New Blog Post\n\nWrite your content here...');
+        setImageUrl('');
         setPublishedDate(new Date().toISOString().split('T')[0]);
         setStatus({ type: '', message: '' });
     };
@@ -545,7 +593,7 @@ const BlogEditor = () => {
             const response = await fetch(url, {
                 method: editingId ? 'PUT' : 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, content: markdown, date: publishedDate }),
+                body: JSON.stringify({ title, content: markdown, date: publishedDate, image_url: imageUrl }),
             });
 
             if (response.ok) {
@@ -553,6 +601,7 @@ const BlogEditor = () => {
                 if (!editingId) {
                     setTitle('');
                     setMarkdown('# New Blog Post\n\nWrite your content here...');
+                    setImageUrl('');
                 }
                 setEditingId(null);
                 setPreview(false);
@@ -630,9 +679,63 @@ const BlogEditor = () => {
                         </div>
                     </div>
 
+                    {/* Picture Upload Area */}
+                    <div className="space-y-2 glass p-5 rounded-2xl border border-white/10">
+                        <div className="flex justify-between items-center">
+                            <label className="text-xs font-semibold text-slate-300 uppercase tracking-widest flex items-center gap-2">
+                                <Image size={16} className="text-secondary" />
+                                Blog Cover Picture
+                            </label>
+                            {imageUrl && (
+                                <button
+                                    type="button"
+                                    onClick={() => setImageUrl('')}
+                                    className="text-xs text-red-400 hover:text-red-300 hover:underline flex items-center gap-1 font-medium transition-colors"
+                                >
+                                    <X size={14} /> Remove Picture
+                                </button>
+                            )}
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-4 items-center">
+                            <div className="flex-1 w-full">
+                                <input
+                                    type="text"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl p-3.5 focus:outline-none focus:border-secondary/50 text-white text-sm"
+                                    placeholder="Paste picture URL or upload image file below..."
+                                    value={imageUrl}
+                                    onChange={(e) => setImageUrl(e.target.value)}
+                                />
+                            </div>
+                            <label className={`w-full sm:w-auto cursor-pointer px-5 py-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white font-medium text-sm flex items-center justify-center gap-2 transition-all shrink-0 ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                {uploadingImage ? <Activity size={18} className="animate-spin text-secondary" /> : <Upload size={18} className="text-secondary" />}
+                                <span>{uploadingImage ? 'Uploading...' : 'Upload Picture'}</span>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    disabled={uploadingImage}
+                                    className="hidden"
+                                />
+                            </label>
+                        </div>
+                        {imageUrl && (
+                            <div className="relative w-full max-w-sm h-40 rounded-xl overflow-hidden border border-white/10 mt-3 bg-black/40 shadow-inner">
+                                <img src={imageUrl} alt="Blog cover preview" className="w-full h-full object-cover" />
+                                <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-[10px] text-slate-300 font-mono">
+                                    Cover Preview
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
                     <div className="glass rounded-2xl border border-white/10 overflow-hidden min-h-[500px] flex flex-col">
                         {preview ? (
                             <div className="p-8 prose prose-invert max-w-none text-slate-300 overflow-y-auto">
+                                {imageUrl && (
+                                    <div className="w-full max-h-80 rounded-2xl overflow-hidden mb-6 border border-white/10 shadow-lg">
+                                        <img src={imageUrl} alt="Featured cover" className="w-full h-full object-cover" />
+                                    </div>
+                                )}
                                 <ReactMarkdown>{markdown}</ReactMarkdown>
                             </div>
                         ) : (
@@ -695,6 +798,11 @@ const BlogEditor = () => {
                             className="glass p-6 rounded-2xl border border-white/10 flex flex-col justify-between group"
                         >
                             <div>
+                                {(post.image_url || post.imageUrl) && (
+                                    <div className="w-full h-40 rounded-xl overflow-hidden mb-4 border border-white/10 bg-black/40">
+                                        <img src={post.image_url || post.imageUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                    </div>
+                                )}
                                 <div className="flex justify-between items-start mb-4">
                                     <span className="text-[10px] font-mono text-primary bg-primary/10 px-2 py-1 rounded">
                                         {new Date(post.display_date).toLocaleDateString()}

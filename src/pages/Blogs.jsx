@@ -45,9 +45,15 @@ const PostModal = ({ post, isOpen, onClose }) => {
                             </span>
                         </div>
 
-                        <h2 className="text-4xl md:text-6xl font-bold text-white mb-12 leading-tight">
+                        <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">
                             {post.title}
                         </h2>
+
+                        {(post.image_url || post.imageUrl) && (
+                            <div className="w-full h-64 md:h-96 rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl">
+                                <img src={post.image_url || post.imageUrl} alt={post.title} className="w-full h-full object-cover" />
+                            </div>
+                        )}
 
                         <div className="prose prose-invert max-w-none prose-p:text-slate-400 prose-headings:text-white prose-strong:text-primary prose-code:text-secondary">
                             <ReactMarkdown>{post.content}</ReactMarkdown>
@@ -86,6 +92,7 @@ const Blogs = () => {
         id: p.id,
         title: p.title,
         content: p.content,
+        imageUrl: p.image_url || p.imageUrl,
         snippet: p.content.substring(0, 150).replace(/[#*`]/g, '') + '...',
         date: new Date(p.display_date || p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
     }));
@@ -147,6 +154,11 @@ const Blogs = () => {
                                     onClick={() => setSelectedPost(article)}
                                     className="glass-card group cursor-pointer overflow-hidden p-8 flex flex-col h-full rounded-3xl"
                                 >
+                                    {article.imageUrl && (
+                                        <div className="h-48 w-full rounded-2xl overflow-hidden mb-6 border border-white/10 bg-black/40">
+                                            <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        </div>
+                                    )}
                                     <span className="text-sm text-primary mb-4 block font-mono">{article.date}</span>
                                     <h3 className="text-2xl font-bold mb-4 group-hover:text-primary transition-colors leading-tight">
                                         {article.title}

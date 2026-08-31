@@ -80,6 +80,9 @@ const migrate = async () => {
                 IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='projects' AND column_name='github_url') THEN
                     ALTER TABLE projects ADD COLUMN github_url TEXT;
                 END IF;
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='blog_posts' AND column_name='image_url') THEN
+                    ALTER TABLE blog_posts ADD COLUMN image_url TEXT;
+                END IF;
             END $$;
         `);
 

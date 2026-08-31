@@ -116,6 +116,7 @@ const connectDB = async () => {
         const client = await pool.connect();
         console.log('PostgreSQL connected successfully via pool');
         await client.query('ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS published_date DATE DEFAULT CURRENT_DATE;');
+        await client.query('ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS image_url TEXT;');
         client.release();
     } catch (err) {
         console.error('Initial Database connection error:', err.message);
@@ -277,11 +278,11 @@ app.get('/api/blog', async (req, res) => {
 });
 
 app.post('/api/blog', async (req, res) => {
-    const { title, content, date } = req.body;
+    const { title, content, date, image_url } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO blog_posts (title, content, published_date) VALUES ($1, $2, $3) RETURNING *',
-            [title, content, date || new Date()]
+            'INSERT INTO blog_posts (title, content, published_date, image_url) VALUES ($1, $2, $3, $4) RETURNING *',
+            [title, content, date || new Date(), image_url || null]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -291,11 +292,11 @@ app.post('/api/blog', async (req, res) => {
 
 app.put('/api/blog/:id', async (req, res) => {
     const { id } = req.params;
-    const { title, content, date } = req.body;
+    const { title, content, date, image_url } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE blog_posts SET title = $1, content = $2, published_date = $3 WHERE id = $4 RETURNING *',
-            [title, content, date, id]
+            'UPDATE blog_posts SET title = $1, content = $2, published_date = $3, image_url = $4 WHERE id = $5 RETURNING *',
+            [title, content, date, image_url || null, id]
         );
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Blog post not found' });

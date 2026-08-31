@@ -44,9 +44,15 @@ const PostModal = ({ post, isOpen, onClose }) => {
                             </span>
                         </div>
 
-                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-8 leading-tight">
+                        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 leading-tight">
                             {post.title}
                         </h2>
+
+                        {(post.image_url || post.imageUrl) && (
+                            <div className="w-full h-64 md:h-80 rounded-2xl overflow-hidden mb-8 border border-slate-800 shadow-xl">
+                                <img src={post.image_url || post.imageUrl} alt={post.title} className="w-full h-full object-cover" />
+                            </div>
+                        )}
 
                         <div className="prose prose-invert max-w-none prose-p:text-slate-300 prose-headings:text-white prose-strong:text-emerald-400 prose-code:text-cyan-400 leading-relaxed">
                             <ReactMarkdown>{post.content}</ReactMarkdown>
@@ -124,11 +130,15 @@ const Blog = () => {
                                 className="bg-[#0b1322] border border-slate-800 rounded-3xl p-8 group cursor-pointer hover:border-emerald-500/40 transition-all duration-500 flex flex-col justify-between"
                             >
                                 <div>
-                                    {/* Cover Placeholder Banner */}
+                                    {/* Cover Image Banner */}
                                     <div className="h-44 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-slate-900 border border-slate-800 mb-6 flex items-center justify-center overflow-hidden group-hover:border-emerald-500/30 transition-colors">
-                                        <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
-                                            <ArrowRight size={20} />
-                                        </div>
+                                        {(article.image_url || article.imageUrl) ? (
+                                            <img src={article.image_url || article.imageUrl} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        ) : (
+                                            <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
+                                                <ArrowRight size={20} />
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Meta info */}

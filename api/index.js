@@ -93,6 +93,7 @@ const ensureTablesExist = async () => {
                 id SERIAL PRIMARY KEY,
                 title VARCHAR(255) NOT NULL,
                 content TEXT NOT NULL,
+                image_url TEXT,
                 published_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
@@ -111,6 +112,7 @@ const ensureTablesExist = async () => {
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS published_date DATE DEFAULT CURRENT_DATE;
+            ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS image_url TEXT;
         `);
         tablesMigrated = true;
     } catch (err) {
@@ -319,11 +321,11 @@ app.get('/api/blog', async (req, res) => {
 });
 
 app.post('/api/blog', async (req, res) => {
-    const { title, content, date } = req.body;
+    const { title, content, date, image_url } = req.body;
     try {
         const result = await pool.query(
-            'INSERT INTO blog_posts (title, content, published_date) VALUES ($1, $2, $3) RETURNING *',
-            [title, content, date || new Date()]
+            'INSERT INTO blog_posts (title, content, published_date, image_url) VALUES ($1, $2, $3, $4) RETURNING *',
+            [title, content, date || new Date(), image_url || null]
         );
         res.status(201).json(result.rows[0]);
     } catch (err) {
@@ -333,11 +335,11 @@ app.post('/api/blog', async (req, res) => {
 
 app.put('/api/blog/:id', async (req, res) => {
     const { id } = req.params;
-    const { title, content, date } = req.body;
+    const { title, content, date, image_url } = req.body;
     try {
         const result = await pool.query(
-            'UPDATE blog_posts SET title = $1, content = $2, published_date = $3 WHERE id = $4 RETURNING *',
-            [title, content, date || new Date(), id]
+            'UPDATE blog_posts SET title = $1, content = $2, published_date = $3, image_url = $4 WHERE id = $5 RETURNING *',
+            [title, content, date || new Date(), image_url || null, id]
         );
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'Blog post not found' });

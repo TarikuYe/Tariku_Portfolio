@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, ExternalLink, Github } from 'lucide-react';
-import { initialProjects } from '../data/portfolio';
+import { ArrowUpRight, X, ExternalLink, Github, Loader2 } from 'lucide-react';
 
 const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui, sans-serif' font-size='22' font-weight='600' fill='%2310b981'%3EProject Preview%3C/text%3E%3C/svg%3E";
 
@@ -33,7 +32,7 @@ const ProjectCard = ({ project, onClick }) => {
             className="group bg-[#0b1322] border border-slate-800/90 rounded-3xl overflow-hidden cursor-pointer flex flex-col h-full hover:border-emerald-500/40 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/5"
             onClick={() => onClick(project)}
         >
-            {/* Image Preview Banner */}
+            {/* Image Banner */}
             <div className="relative h-64 md:h-72 overflow-hidden bg-slate-900">
                 {displayImage ? (
                     <img
@@ -61,7 +60,7 @@ const ProjectCard = ({ project, onClick }) => {
                 <div>
                     {/* Tech Stack Pills */}
                     <div className="flex flex-wrap gap-2 mb-4">
-                        {tags.map((tech, i) => (
+                        {tags.slice(0, 4).map((tech, i) => (
                             <span key={i} className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
                                 {tech.trim()}
                             </span>
@@ -141,7 +140,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
                             </div>
 
                             <div className="flex flex-wrap gap-4 pt-6 border-t border-slate-800">
-                                {project.github_url && (
+                                {project.github_url && project.github_url !== '#' && (
                                     <a
                                         href={project.github_url}
                                         target="_blank"
@@ -174,6 +173,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
 
 const Projects = () => {
     const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [selectedProject, setSelectedProject] = useState(null);
 
     useEffect(() => {
@@ -182,20 +182,16 @@ const Projects = () => {
                 const response = await fetch('/api/projects');
                 if (response.ok) {
                     const data = await response.json();
-                    if (data && data.length > 0) {
-                        setProjects(data);
-                        return;
-                    }
+                    setProjects(data);
                 }
             } catch (err) {
-                console.error('Fetch projects error:', err);
+                console.error('Database fetch projects error:', err);
+            } finally {
+                setLoading(false);
             }
-            setProjects(initialProjects);
         };
         fetchProjects();
     }, []);
-
-    const displayList = projects.length > 0 ? projects : initialProjects;
 
     return (
         <section id="work" className="py-24 bg-[#060a12] text-white relative">
@@ -207,7 +203,7 @@ const Projects = () => {
                             Featured <span className="text-emerald-400">Projects.</span>
                         </h2>
                         <p className="text-slate-400 text-base md:text-lg max-w-xl">
-                            Showcasing my best work from the dashboard. Everything you see here is updated in real-time.
+                            Showcasing my best work dynamically fetched from the database. Everything you see here is updated in real-time.
                         </p>
                     </div>
 
@@ -216,16 +212,27 @@ const Projects = () => {
                     </div>
                 </div>
 
-                {/* 2x2 Projects Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-                    {displayList.map((project) => (
-                        <ProjectCard
-                            key={project.id}
-                            project={project}
-                            onClick={(p) => setSelectedProject(p)}
-                        />
-                    ))}
-                </div>
+                {/* Loading State */}
+                {loading ? (
+                    <div className="flex justify-center items-center py-20">
+                        <Loader2 className="animate-spin text-emerald-400" size={40} />
+                    </div>
+                ) : projects.length === 0 ? (
+                    <div className="text-center py-16 bg-[#0b1322] border border-slate-800 rounded-3xl text-slate-400">
+                        No projects found in database.
+                    </div>
+                ) : (
+                    /* Dynamic Database Projects Grid */
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+                        {projects.map((project) => (
+                            <ProjectCard
+                                key={project.id}
+                                project={project}
+                                onClick={(p) => setSelectedProject(p)}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
 
             <ProjectModal

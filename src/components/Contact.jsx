@@ -181,14 +181,14 @@ const Contact = () => {
                                     <ArrowUpRight size={14} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
                                 </a>
                                 <a
-                                    href="https://www.instagram.com/taiku_et"
+                                    href="https://www.instagram.com/tariku_et?igsi=MWYzajZkdTJxOWsyYQ=="
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-2 group"
-                                    title="Instagram @taiku_et"
+                                    title="Instagram"
                                 >
                                     <Instagram size={16} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
-                                    <span>@taiku_et</span>
+                                    <span>Instagram</span>
                                     <ArrowUpRight size={14} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
                                 </a>
                             </div>

@@ -139,7 +139,38 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// Image Upload Endpoint (Cloudinary with Vercel Serverless compatibility)
+// Image Proxy Endpoint (proxies Cloudinary images through Vercel serverless to bypass local ISP/network connection timeouts)
+app.get('/api/proxy-image', async (req, res) => {
+    const { url } = req.query;
+    if (!url) {
+        return res.status(400).send('Missing url parameter');
+    }
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        });
+
+        if (!response.ok) {
+            return res.status(response.status).send('Failed to fetch image from source');
+        }
+
+        const contentType = response.headers.get('content-type') || 'image/jpeg';
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        return res.send(buffer);
+    } catch (err) {
+        console.error('Proxy image error:', err.message);
+        return res.status(500).send('Proxy error: ' + err.message);
+    }
+});
+
+// Image Upload Endpoint (Cloudinary with Vercel Serverless compatibility & Base64 fallback)
 app.post('/api/upload', (req, res, next) => {
     upload.single('image')(req, res, (err) => {
         if (err instanceof multer.MulterError) {
@@ -159,40 +190,43 @@ app.post('/api/upload', (req, res, next) => {
         const apiKey = process.env.CLOUDINARY_API_KEY;
         const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-        if (!cloudName || !apiKey || !apiSecret) {
-            console.error('Cloudinary environment variables missing on Vercel');
-            return res.status(500).json({
-                message: 'Cloudinary credentials missing. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Vercel Environment Variables.'
-            });
+        // 1. Try uploading to Cloudinary if credentials are configured
+        if (cloudName && apiKey && apiSecret) {
+            try {
+                cloudinary.config({
+                    cloud_name: cloudName,
+                    api_key: apiKey,
+                    api_secret: apiSecret,
+                    secure: true
+                });
+
+                const uploadResult = await new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream(
+                        {
+                            folder: 'portfolio_uploads',
+                            resource_type: 'auto',
+                        },
+                        (error, result) => {
+                            if (error) return reject(error);
+                            resolve(result);
+                        }
+                    );
+                    stream.end(req.file.buffer);
+                });
+
+                return res.json({ imageUrl: uploadResult.secure_url });
+            } catch (cloudErr) {
+                console.error('Cloudinary upload failed, falling back to base64 data URI:', cloudErr.message);
+            }
         }
 
-        // Configure Cloudinary
-        cloudinary.config({
-            cloud_name: cloudName,
-            api_key: apiKey,
-            api_secret: apiSecret,
-            secure: true
-        });
-
-        // Upload buffer directly to Cloudinary via stream
-        const uploadResult = await new Promise((resolve, reject) => {
-            const stream = cloudinary.uploader.upload_stream(
-                {
-                    folder: 'portfolio_uploads',
-                    resource_type: 'auto',
-                },
-                (error, result) => {
-                    if (error) return reject(error);
-                    resolve(result);
-                }
-            );
-            stream.end(req.file.buffer);
-        });
-
-        return res.json({ imageUrl: uploadResult.secure_url });
+        // 2. Base64 fallback (Zero network dependency, works on any network)
+        const mimeType = req.file.mimetype || 'image/jpeg';
+        const base64Data = `data:${mimeType};base64,${req.file.buffer.toString('base64')}`;
+        return res.json({ imageUrl: base64Data });
     } catch (err) {
-        console.error('Cloudinary Upload Exception:', err);
-        return res.status(500).json({ message: `Cloudinary upload failed: ${err.message || err}` });
+        console.error('Upload exception:', err);
+        return res.status(500).json({ message: `Upload failed: ${err.message || err}` });
     }
 });
 

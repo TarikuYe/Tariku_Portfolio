@@ -134,6 +134,37 @@ const transporter = nodemailer.createTransport({
 
 // --- Routes ---
 
+// Image Proxy Endpoint (proxies Cloudinary images to bypass client connection timeouts)
+app.get('/api/proxy-image', async (req, res) => {
+    const { url } = req.query;
+    if (!url) {
+        return res.status(400).send('Missing url parameter');
+    }
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            }
+        });
+
+        if (!response.ok) {
+            return res.status(response.status).send('Failed to fetch image from source');
+        }
+
+        const contentType = response.headers.get('content-type') || 'image/jpeg';
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        return res.send(buffer);
+    } catch (err) {
+        console.error('Proxy image error:', err.message);
+        return res.status(500).send('Proxy error: ' + err.message);
+    }
+});
+
 // Image Upload Endpoint (Cloudinary if env vars available, otherwise local disk)
 app.post('/api/upload', (req, res, next) => {
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;

@@ -15,6 +15,23 @@ const getDisplayImageUrl = (url) => {
     return url;
 };
 
+const formatBlogDate = (rawDate) => {
+    if (!rawDate) return '';
+    const str = String(rawDate).trim();
+    const dateOnly = str.includes('T') ? str.split('T')[0] : str;
+    const parts = dateOnly.split('-');
+    if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        const dateObj = new Date(year, month, day);
+        if (!isNaN(dateObj.getTime())) {
+            return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+    }
+    return dateOnly;
+};
+
 const PostModal = ({ post, isOpen, onClose }) => {
     if (!isOpen || !post) return null;
 
@@ -45,7 +62,7 @@ const PostModal = ({ post, isOpen, onClose }) => {
                         <div className="flex items-center gap-4 mb-8 text-primary font-mono text-sm">
                             <span className="flex items-center gap-2">
                                 <Calendar size={14} />
-                                {post.date}
+                                {formatBlogDate(post.date || post.display_date || post.published_date)}
                             </span>
                             <span className="w-1 h-1 bg-white/20 rounded-full" />
                             <span className="flex items-center gap-2">
@@ -103,7 +120,7 @@ const Blogs = () => {
         content: p.content,
         imageUrl: p.image_url || p.imageUrl,
         snippet: p.content.substring(0, 150).replace(/[#*`]/g, '') + '...',
-        date: new Date(p.display_date || p.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        date: formatBlogDate(p.display_date || p.published_date || p.created_at)
     }));
 
     const filteredArticles = displayArticles.filter(article =>

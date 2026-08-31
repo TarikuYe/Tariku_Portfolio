@@ -14,6 +14,23 @@ const getDisplayImageUrl = (url) => {
     return url;
 };
 
+const formatBlogDate = (rawDate) => {
+    if (!rawDate) return '';
+    const str = String(rawDate).trim();
+    const dateOnly = str.includes('T') ? str.split('T')[0] : str;
+    const parts = dateOnly.split('-');
+    if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        const dateObj = new Date(year, month, day);
+        if (!isNaN(dateObj.getTime())) {
+            return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+    }
+    return dateOnly;
+};
+
 const PostModal = ({ post, isOpen, onClose }) => {
     if (!isOpen || !post) return null;
 
@@ -44,7 +61,7 @@ const PostModal = ({ post, isOpen, onClose }) => {
                         <div className="flex items-center gap-4 mb-6 text-emerald-400 text-xs uppercase font-bold tracking-widest">
                             <span className="flex items-center gap-1.5">
                                 <Calendar size={14} />
-                                {post.date}
+                                {formatBlogDate(post.date || post.display_date || post.published_date)}
                             </span>
                             <span>•</span>
                             <span className="flex items-center gap-1.5">
@@ -127,7 +144,8 @@ const Blog = () => {
                 {/* 3 Column Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
                     {limitedArticles.map((article, index) => {
-                        const formattedDate = article.display_date || article.published_date || article.date || 'FEB 2026';
+                        const rawDate = article.display_date || article.published_date || article.date;
+                        const formattedDate = formatBlogDate(rawDate) || 'FEB 2026';
                         return (
                             <motion.article
                                 key={article.id || index}

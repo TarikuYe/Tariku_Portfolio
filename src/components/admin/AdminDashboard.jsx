@@ -47,6 +47,23 @@ const getDisplayImageUrl = (url) => {
     return url;
 };
 
+const formatBlogDate = (rawDate) => {
+    if (!rawDate) return '';
+    const str = String(rawDate).trim();
+    const dateOnly = str.includes('T') ? str.split('T')[0] : str;
+    const parts = dateOnly.split('-');
+    if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        const dateObj = new Date(year, month, day);
+        if (!isNaN(dateObj.getTime())) {
+            return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+    }
+    return dateOnly;
+};
+
 const ProjectManager = () => {
     const [projects, setProjects] = useState([]);
     const [newProject, setNewProject] = useState({
@@ -805,7 +822,7 @@ const BlogEditor = () => {
                                 )}
                                 <div className="flex justify-between items-start mb-4">
                                     <span className="text-[10px] font-mono text-primary bg-primary/10 px-2 py-1 rounded">
-                                        {new Date(post.display_date).toLocaleDateString()}
+                                        {formatBlogDate(post.display_date || post.published_date || post.created_at)}
                                     </span>
                                     <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button

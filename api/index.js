@@ -20,24 +20,11 @@ app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ limit: '5mb', extended: true }));
 
-// Cloudinary Configuration
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
+// Multer Memory Storage for Vercel Serverless
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
-
-// Cloudinary Storage for Multer
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: 'portfolio_uploads',
-        allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
-        transformation: [{ width: 1000, height: 1000, crop: 'limit' }]
-    },
-});
-
-const upload = multer({ storage });
 
 // PostgreSQL Pool
 const pool = new Pool({
@@ -67,12 +54,61 @@ app.get('/api/health', async (req, res) => {
     }
 });
 
-// Image Upload Endpoint
-app.post('/api/upload', upload.single('image'), (req, res) => {
-    if (!req.file || !req.file.path) {
-        return res.status(400).json({ message: 'No file uploaded' });
+// Image Upload Endpoint (Cloudinary with Vercel Serverless compatibility)
+app.post('/api/upload', (req, res, next) => {
+    upload.single('image')(req, res, (err) => {
+        if (err instanceof multer.MulterError) {
+            return res.status(400).json({ message: `Upload error: ${err.message}` });
+        } else if (err) {
+            return res.status(500).json({ message: `Processing error: ${err.message}` });
+        }
+        next();
+    });
+}, async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No image file uploaded' });
+        }
+
+        const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+        const apiKey = process.env.CLOUDINARY_API_KEY;
+        const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+        if (!cloudName || !apiKey || !apiSecret) {
+            console.error('Cloudinary environment variables missing on Vercel');
+            return res.status(500).json({
+                message: 'Cloudinary credentials missing. Please set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET in your Vercel Environment Variables.'
+            });
+        }
+
+        // Configure Cloudinary
+        cloudinary.config({
+            cloud_name: cloudName,
+            api_key: apiKey,
+            api_secret: apiSecret,
+            secure: true
+        });
+
+        // Upload buffer directly to Cloudinary via stream
+        const uploadResult = await new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder: 'portfolio_uploads',
+                    resource_type: 'auto',
+                },
+                (error, result) => {
+                    if (error) return reject(error);
+                    resolve(result);
+                }
+            );
+            stream.end(req.file.buffer);
+        });
+
+        return res.json({ imageUrl: uploadResult.secure_url });
+    } catch (err) {
+        console.error('Cloudinary Upload Exception:', err);
+        return res.status(500).json({ message: `Cloudinary upload failed: ${err.message || err}` });
     }
-    res.json({ imageUrl: req.file.path });
 });
 
 // 1. Auth: Login
@@ -264,6 +300,12 @@ app.get('/api/stats', async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+});
+
+// Global Express Error Handler
+app.use((err, req, res, next) => {
+    console.error('Unhandled API Error:', err);
+    res.status(500).json({ message: err.message || 'Internal Server Error' });
 });
 
 export default app;

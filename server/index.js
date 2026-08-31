@@ -10,6 +10,8 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import { v2 as cloudinary } from 'cloudinary';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -44,9 +46,13 @@ process.on('uncaughtException', (err) => {
     console.error('CRITICAL: Uncaught Exception thrown:', err);
 });
 
+// Multer Storage Setup (Memory for Cloudinary / Disk for Local fallback)
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 }
+});
 
-// Multer Storage Config
-const storage = multer.diskStorage({
+const diskStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/');
     },
@@ -54,8 +60,7 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname));
     }
 });
-
-const upload = multer({ storage });
+const diskUpload = multer({ storage: diskStorage });
 
 // PostgreSQL Pool
 const pool = new Pool({
@@ -64,7 +69,6 @@ const pool = new Pool({
     database: process.env.DB_NAME || 'portfolio_admin',
     password: process.env.DB_PASSWORD,
     port: process.env.DB_PORT || 5432,
-    // Pool settings for stability
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
@@ -80,10 +84,7 @@ const connectDB = async () => {
     try {
         const client = await pool.connect();
         console.log('PostgreSQL connected successfully via pool');
-
-        // Migration: Add published_date to blog_posts if missing
         await client.query('ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS published_date DATE DEFAULT CURRENT_DATE;');
-
         client.release();
     } catch (err) {
         console.error('Initial Database connection error:', err.message);
@@ -93,7 +94,7 @@ connectDB();
 
 // Nodemailer Transporter
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Or any other service
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
@@ -102,13 +103,44 @@ const transporter = nodemailer.createTransport({
 
 // --- Routes ---
 
-// Image Upload Endpoint
-app.post('/api/upload', upload.single('image'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
+// Image Upload Endpoint (Cloudinary if env vars available, otherwise local disk)
+app.post('/api/upload', (req, res, next) => {
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    if (cloudName && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+        upload.single('image')(req, res, async (err) => {
+            if (err) return res.status(400).json({ message: `Upload error: ${err.message}` });
+            if (!req.file) return res.status(400).json({ message: 'No image file uploaded' });
+
+            try {
+                cloudinary.config({
+                    cloud_name: cloudName,
+                    api_key: process.env.CLOUDINARY_API_KEY,
+                    api_secret: process.env.CLOUDINARY_API_SECRET,
+                    secure: true
+                });
+
+                const result = await new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream(
+                        { folder: 'portfolio_uploads', resource_type: 'auto' },
+                        (error, result) => (error ? reject(error) : resolve(result))
+                    );
+                    stream.end(req.file.buffer);
+                });
+
+                return res.json({ imageUrl: result.secure_url });
+            } catch (cloudErr) {
+                console.error('Cloudinary Upload Exception:', cloudErr);
+                return res.status(500).json({ message: `Cloudinary upload failed: ${cloudErr.message}` });
+            }
+        });
+    } else {
+        diskUpload.single('image')(req, res, (err) => {
+            if (err) return res.status(400).json({ message: `Upload error: ${err.message}` });
+            if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+            const imageUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+            res.json({ imageUrl });
+        });
     }
-    const imageUrl = `http://localhost:${PORT}/uploads/${req.file.filename}`;
-    res.json({ imageUrl });
 });
 
 // 1. Auth: Login

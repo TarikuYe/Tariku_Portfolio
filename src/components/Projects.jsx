@@ -2,6 +2,8 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Github, ExternalLink, X, ArrowUpRight, Loader2, Download, ShoppingBag } from 'lucide-react';
 
+const DEFAULT_FALLBACK_IMAGE = "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1000";
+
 const ProjectCard = ({ project, onClick }) => {
     return (
         <motion.div
@@ -18,6 +20,10 @@ const ProjectCard = ({ project, onClick }) => {
                         src={project.image_url}
                         alt={project.title}
                         className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = DEFAULT_FALLBACK_IMAGE;
+                        }}
                     />
                 ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-600 italic text-xs">
@@ -83,12 +89,20 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
                                         src={project.image_url}
                                         alt=""
                                         className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-30 scale-110"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = DEFAULT_FALLBACK_IMAGE;
+                                        }}
                                     />
                                     {/* Main Image */}
                                     <img
                                         src={project.image_url}
                                         alt={project.title}
                                         className="relative z-10 w-full h-full object-contain shadow-2xl"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = DEFAULT_FALLBACK_IMAGE;
+                                        }}
                                     />
                                 </>
                             ) : (

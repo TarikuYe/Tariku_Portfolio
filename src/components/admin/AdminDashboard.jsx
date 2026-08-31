@@ -99,15 +99,22 @@ const ProjectManager = () => {
                 method: 'POST',
                 body: formData,
             });
-            const data = await response.json();
-            if (data.imageUrl) {
-                setNewProject({ ...newProject, imageUrl: data.imageUrl });
+
+            let data;
+            try {
+                data = await response.json();
+            } catch (jsonErr) {
+                throw new Error(`Server returned HTTP ${response.status} non-JSON response.`);
+            }
+
+            if (response.ok && data.imageUrl) {
+                setNewProject((prev) => ({ ...prev, imageUrl: data.imageUrl }));
             } else {
-                setFormError(data.message || 'Image upload failed');
+                setFormError(data.message || data.error || 'Image upload failed. Check Cloudinary settings.');
             }
         } catch (error) {
             console.error('Upload failed:', error);
-            setFormError('Network error during image upload.');
+            setFormError(error.message || 'Network error during image upload.');
         } finally {
             setUploading(false);
         }

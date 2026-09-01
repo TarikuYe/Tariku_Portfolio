@@ -75,13 +75,40 @@ const PostModal = ({ post, isOpen, onClose }) => {
                         </h2>
 
                         {(post.image_url || post.imageUrl) && (
-                            <div className="w-full h-64 md:h-80 rounded-2xl overflow-hidden mb-8 border border-slate-800 shadow-xl">
-                                <img src={getDisplayImageUrl(post.image_url || post.imageUrl)} alt={post.title} className="w-full h-full object-cover" />
+                            <div className="w-full relative rounded-2xl overflow-hidden mb-8 border border-slate-800 shadow-2xl bg-slate-950 flex items-center justify-center min-h-[220px] max-h-[500px]">
+                                <img
+                                    src={getDisplayImageUrl(post.image_url || post.imageUrl)}
+                                    alt=""
+                                    className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 pointer-events-none"
+                                />
+                                <img
+                                    src={getDisplayImageUrl(post.image_url || post.imageUrl)}
+                                    alt={post.title}
+                                    className="relative z-10 w-full max-h-[500px] h-auto object-contain rounded-2xl"
+                                />
                             </div>
                         )}
 
                         <div className="prose prose-invert max-w-none prose-p:text-slate-300 prose-headings:text-white prose-strong:text-emerald-400 prose-code:text-cyan-400 leading-relaxed">
-                            <ReactMarkdown>{post.content}</ReactMarkdown>
+                            <ReactMarkdown
+                                components={{
+                                    img: ({ node, ...props }) => (
+                                        <div className="my-6 relative rounded-2xl overflow-hidden border border-slate-800 shadow-xl bg-slate-950 flex items-center justify-center min-h-[200px] max-h-[500px]">
+                                            <img
+                                                src={props.src}
+                                                alt=""
+                                                className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 pointer-events-none"
+                                            />
+                                            <img
+                                                {...props}
+                                                className="relative z-10 w-full max-h-[500px] h-auto object-contain rounded-2xl"
+                                            />
+                                        </div>
+                                    )
+                                }}
+                            >
+                                {post.content}
+                            </ReactMarkdown>
                         </div>
                     </div>
                 </motion.div>
@@ -158,9 +185,20 @@ const Blog = () => {
                             >
                                 <div>
                                     {/* Cover Image Banner */}
-                                    <div className="h-44 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-slate-900 border border-slate-800 mb-6 flex items-center justify-center overflow-hidden group-hover:border-emerald-500/30 transition-colors">
+                                    <div className="h-48 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-slate-900 border border-slate-800 mb-6 flex items-center justify-center overflow-hidden group-hover:border-emerald-500/30 transition-colors relative">
                                         {(article.image_url || article.imageUrl) ? (
-                                            <img src={getDisplayImageUrl(article.image_url || article.imageUrl)} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <>
+                                                <img
+                                                    src={getDisplayImageUrl(article.image_url || article.imageUrl)}
+                                                    alt=""
+                                                    className="absolute inset-0 w-full h-full object-cover blur-xl opacity-30 pointer-events-none"
+                                                />
+                                                <img
+                                                    src={getDisplayImageUrl(article.image_url || article.imageUrl)}
+                                                    alt={article.title}
+                                                    className="relative z-10 w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 p-1"
+                                                />
+                                            </>
                                         ) : (
                                             <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:scale-110 transition-transform">
                                                 <ArrowRight size={20} />

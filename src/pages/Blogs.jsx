@@ -76,13 +76,40 @@ const PostModal = ({ post, isOpen, onClose }) => {
                         </h2>
 
                         {(post.image_url || post.imageUrl) && (
-                            <div className="w-full h-64 md:h-96 rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl">
-                                <img src={getDisplayImageUrl(post.image_url || post.imageUrl)} alt={post.title} className="w-full h-full object-cover" />
+                            <div className="w-full relative rounded-3xl overflow-hidden mb-12 border border-white/10 shadow-2xl bg-black/40 flex items-center justify-center min-h-[240px] max-h-[500px]">
+                                <img
+                                    src={getDisplayImageUrl(post.image_url || post.imageUrl)}
+                                    alt=""
+                                    className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 pointer-events-none"
+                                />
+                                <img
+                                    src={getDisplayImageUrl(post.image_url || post.imageUrl)}
+                                    alt={post.title}
+                                    className="relative z-10 w-full max-h-[500px] h-auto object-contain rounded-3xl"
+                                />
                             </div>
                         )}
 
                         <div className="prose prose-invert max-w-none prose-p:text-slate-400 prose-headings:text-white prose-strong:text-primary prose-code:text-secondary">
-                            <ReactMarkdown>{post.content}</ReactMarkdown>
+                            <ReactMarkdown
+                                components={{
+                                    img: ({ node, ...props }) => (
+                                        <div className="my-6 relative rounded-2xl overflow-hidden border border-white/10 shadow-xl bg-black/40 flex items-center justify-center min-h-[200px] max-h-[500px]">
+                                            <img
+                                                src={props.src}
+                                                alt=""
+                                                className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 pointer-events-none"
+                                            />
+                                            <img
+                                                {...props}
+                                                className="relative z-10 w-full max-h-[500px] h-auto object-contain rounded-2xl"
+                                            />
+                                        </div>
+                                    )
+                                }}
+                            >
+                                {post.content}
+                            </ReactMarkdown>
                         </div>
                     </div>
                 </motion.div>
@@ -181,8 +208,17 @@ const Blogs = () => {
                                     className="glass-card group cursor-pointer overflow-hidden p-8 flex flex-col h-full rounded-3xl"
                                 >
                                     {article.imageUrl && (
-                                        <div className="h-48 w-full rounded-2xl overflow-hidden mb-6 border border-white/10 bg-black/40">
-                                            <img src={getDisplayImageUrl(article.imageUrl)} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                        <div className="h-48 w-full rounded-2xl overflow-hidden mb-6 border border-white/10 bg-black/40 relative flex items-center justify-center">
+                                            <img
+                                                src={getDisplayImageUrl(article.imageUrl)}
+                                                alt=""
+                                                className="absolute inset-0 w-full h-full object-cover blur-xl opacity-30 pointer-events-none"
+                                            />
+                                            <img
+                                                src={getDisplayImageUrl(article.imageUrl)}
+                                                alt={article.title}
+                                                className="relative z-10 w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 p-1"
+                                            />
                                         </div>
                                     )}
                                     <span className="text-sm text-primary mb-4 block font-mono">{article.date}</span>

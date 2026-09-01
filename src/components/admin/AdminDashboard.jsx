@@ -736,9 +736,10 @@ const BlogEditor = () => {
                             </label>
                         </div>
                         {imageUrl && (
-                            <div className="relative w-full max-w-sm h-40 rounded-xl overflow-hidden border border-white/10 mt-3 bg-black/40 shadow-inner">
-                                <img src={getDisplayImageUrl(imageUrl)} alt="Blog cover preview" className="w-full h-full object-cover" />
-                                <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-[10px] text-slate-300 font-mono">
+                            <div className="relative w-full max-w-sm h-40 rounded-xl overflow-hidden border border-white/10 mt-3 bg-black/40 shadow-inner flex items-center justify-center">
+                                <img src={getDisplayImageUrl(imageUrl)} alt="" className="absolute inset-0 w-full h-full object-cover blur-xl opacity-30 pointer-events-none" />
+                                <img src={getDisplayImageUrl(imageUrl)} alt="Blog cover preview" className="relative z-10 max-w-full max-h-full object-contain p-1" />
+                                <div className="absolute bottom-2 left-2 z-20 bg-black/70 backdrop-blur-md px-2 py-0.5 rounded text-[10px] text-slate-300 font-mono">
                                     Cover Preview
                                 </div>
                             </div>
@@ -749,8 +750,9 @@ const BlogEditor = () => {
                         {preview ? (
                             <div className="p-8 prose prose-invert max-w-none text-slate-300 overflow-y-auto">
                                 {imageUrl && (
-                                    <div className="w-full max-h-80 rounded-2xl overflow-hidden mb-6 border border-white/10 shadow-lg">
-                                        <img src={getDisplayImageUrl(imageUrl)} alt="Featured cover" className="w-full h-full object-cover" />
+                                    <div className="w-full relative rounded-2xl overflow-hidden mb-6 border border-white/10 shadow-lg bg-black/40 flex items-center justify-center max-h-[400px]">
+                                        <img src={getDisplayImageUrl(imageUrl)} alt="" className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-40 pointer-events-none" />
+                                        <img src={getDisplayImageUrl(imageUrl)} alt="Featured cover" className="relative z-10 w-full max-h-[400px] h-auto object-contain rounded-2xl" />
                                     </div>
                                 )}
                                 <ReactMarkdown>{markdown}</ReactMarkdown>

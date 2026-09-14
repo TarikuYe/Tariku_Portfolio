@@ -6,15 +6,36 @@ import { useNavigate } from 'react-router-dom';
 const AdminLogin = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Placeholder for JWT login logic
-        console.log('Login attempt:', { email, password });
-        // After successful login, redirect to dashboard
-        // For now, let's just navigate
-        navigate('/admin/dashboard');
+        setLoading(true);
+        setError('');
+
+        try {
+            const response = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.token) {
+                localStorage.setItem('adminToken', data.token);
+                navigate('/admin/dashboard');
+            } else {
+                setError(data.message || data.error || 'Invalid credentials');
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setError('Network error. Unable to reach authentication server.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -65,11 +86,18 @@ const AdminLogin = () => {
                         </div>
                     </div>
 
+                    {error && (
+                        <div className="p-3.5 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center font-medium">
+                            {error}
+                        </div>
+                    )}
+
                     <button
                         type="submit"
-                        className="w-full py-4 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all transform hover:-translate-y-1 active:translate-y-0"
+                        disabled={loading}
+                        className="w-full py-4 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all transform hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2"
                     >
-                        Access Control
+                        {loading ? 'Authenticating...' : 'Access Control'}
                     </button>
                 </form>
 

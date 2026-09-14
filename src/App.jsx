@@ -17,6 +17,14 @@ const ScrollToTop = () => {
   return null;
 };
 
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('adminToken');
+  if (!token) {
+    return <Navigate to="/admin" replace />;
+  }
+  return children;
+};
+
 function App() {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -42,7 +50,14 @@ function App() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/admin" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
           {/* Redirect any other /admin paths to login for now */}
           <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
         </Routes>

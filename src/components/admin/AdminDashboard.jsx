@@ -20,6 +20,7 @@ import {
     Image
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom';
 
 // --- Sub-components ---
 
@@ -1027,6 +1028,12 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('overview');
     const [dbStatus, setDbStatus] = useState('active'); // Default to active to avoid flicker
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        localStorage.removeItem('adminToken');
+        navigate('/admin');
+    };
 
     useEffect(() => {
         const checkHealth = async () => {
@@ -1111,7 +1118,10 @@ const AdminDashboard = () => {
                     ))}
                 </nav>
 
-                <button className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/5 rounded-xl transition-all font-medium mt-auto">
+                <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/5 rounded-xl transition-all font-medium mt-auto"
+                >
                     <LogOut size={20} />
                     Logout
                 </button>

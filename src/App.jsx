@@ -13,7 +13,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 const ScrollToTop = () => {
   const { pathname } = useLocation();
   useEffect(() => {
-    window.scrollTo(0, 0);
+    const homeSections = ['/work', '/services', '/about', '/contact'];
+    if (!homeSections.includes(pathname)) {
+      window.scrollTo(0, 0);
+    }
   }, [pathname]);
   return null;
 };
@@ -38,6 +41,7 @@ function App() {
   }, []);
 
   const scrollToTop = () => {
+    window.history.pushState(null, '', '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -46,7 +50,11 @@ function App() {
       <ScrollToTop />
       <div className="bg-dark-darker min-h-screen relative text-slate-200">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home targetSection="hero" />} />
+          <Route path="/work" element={<Home targetSection="work" />} />
+          <Route path="/services" element={<Home targetSection="services" />} />
+          <Route path="/about" element={<Home targetSection="about" />} />
+          <Route path="/contact" element={<Home targetSection="contact" />} />
           <Route path="/blog" element={<Blogs />} />
           <Route path="/projects/:id" element={<ProjectDetails />} />
           <Route path="/project/:id" element={<ProjectDetails />} />
@@ -61,8 +69,8 @@ function App() {
               </ProtectedRoute>
             }
           />
-          {/* Redirect any other /admin paths to login for now */}
           <Route path="/admin/*" element={<Navigate to="/admin" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
 
         <AnimatePresence>

@@ -8,25 +8,44 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { scroller } from 'react-scroll';
 
-function Home() {
-    const { hash } = useLocation();
+function Home({ targetSection: initialSection }) {
+    const location = useLocation();
 
+    // Clean up any legacy hash from URL immediately (converts /#work -> /work)
     useEffect(() => {
-        if (hash) {
-            const section = hash.replace('#', '');
-            const targetEl = document.getElementById(section);
-            if (targetEl) {
-                targetEl.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                setTimeout(() => {
-                    const el = document.getElementById(section);
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-            }
+        if (window.location.hash) {
+            const hashSection = window.location.hash.replace('#', '');
+            const cleanPath = hashSection === 'hero' ? '/' : `/${hashSection}`;
+            window.history.replaceState(null, '', cleanPath);
         }
-    }, [hash]);
+    }, []);
+
+    // Handle clean section routing (/work, /services, /about, /contact)
+    useEffect(() => {
+        const path = location.pathname;
+        const section = initialSection || (path !== '/' ? path.replace('/', '') : null);
+
+        if (section && section !== 'hero') {
+            const scrollToTarget = () => {
+                const el = document.getElementById(section);
+                if (el) {
+                    const offset = 80;
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const elementRect = el.getBoundingClientRect().top;
+                    const offsetPosition = elementRect - bodyRect - offset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            };
+            const timer = setTimeout(scrollToTarget, 100);
+            return () => clearTimeout(timer);
+        } else if (path === '/' && !location.hash) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, [initialSection, location.pathname]);
 
     return (
         <>

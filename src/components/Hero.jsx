@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, FileText } from 'lucide-react';
-import { Link } from 'react-scroll';
 
 const Hero = () => {
     const techPills = [
@@ -12,6 +11,21 @@ const Hero = () => {
         "NLP",
         "Tailwind"
     ];
+
+    const handleViewWork = () => {
+        window.history.pushState(null, '', '/work');
+        const element = document.getElementById('work');
+        if (element) {
+            const offset = 80;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = element.getBoundingClientRect().top;
+            const offsetPosition = elementRect - bodyRect - offset;
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    };
 
     return (
         <section
@@ -83,15 +97,13 @@ const Hero = () => {
                     transition={{ duration: 0.8, delay: 0.4 }}
                     className="flex flex-wrap gap-4 sm:gap-5 items-center justify-center"
                 >
-                    <Link
-                        to="work"
-                        smooth={true}
-                        offset={-80}
+                    <button
+                        onClick={handleViewWork}
                         className="cursor-pointer px-8 py-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm md:text-base rounded-full flex items-center gap-2.5 shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/40 transition-all duration-300 active:scale-95"
                     >
                         <span>View Featured Projects</span>
                         <ArrowRight size={18} />
-                    </Link>
+                    </button>
 
                     <a
                         href="https://drive.google.com/file/d/1cJlM2MmqCWY2iy0H1vXMhSFJPat8BFNp/view?usp=sharing"

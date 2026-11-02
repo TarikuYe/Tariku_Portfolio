@@ -93,7 +93,7 @@ const ProjectDetails = () => {
                 <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-7xl mb-8">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3 border-b border-slate-800/80">
                         <Link
-                            to="/#work"
+                            to="/work"
                             className="inline-flex items-center gap-2 text-slate-400 hover:text-emerald-400 text-sm font-semibold transition-colors group"
                         >
                             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
@@ -505,7 +505,7 @@ const ProjectDetails = () => {
                                         </a>
                                     ) : (
                                         <button
-                                            onClick={() => navigate('/#contact')}
+                                            onClick={() => navigate('/contact')}
                                             className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20"
                                         >
                                             <span>Request Live Demo</span>
@@ -580,7 +580,7 @@ const ProjectDetails = () => {
                         </p>
                         <div className="pt-2">
                             <Link
-                                to="/#contact"
+                                to="/contact"
                                 className="inline-flex items-center gap-2 px-8 py-3.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-sm uppercase tracking-wider rounded-full shadow-xl shadow-emerald-500/20 transition-all active:scale-95"
                             >
                                 <span>Start a Conversation</span>

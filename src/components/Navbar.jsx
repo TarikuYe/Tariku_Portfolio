@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
-import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const [activeSection, setActiveSection] = useState('hero');
     const location = useLocation();
-    const isHomePage = location.pathname === '/';
+    const navigate = useNavigate();
+
+    const homePaths = ['/', '/work', '/services', '/about', '/contact'];
+    const isHomePage = homePaths.includes(location.pathname);
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
         };
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
@@ -29,82 +32,148 @@ const Navbar = () => {
         };
     }, [isOpen]);
 
+    // Active link highlighting & clean URL update on scroll
+    useEffect(() => {
+        if (!isHomePage) {
+            if (location.pathname === '/blog') {
+                setActiveSection('blog');
+            }
+            return;
+        }
+
+        const sections = ['hero', 'work', 'services', 'about', 'contact'];
+        const handleScrollSpy = () => {
+            const scrollPosition = window.scrollY + 180;
+            for (let i = sections.length - 1; i >= 0; i--) {
+                const el = document.getElementById(sections[i]);
+                if (el && el.offsetTop <= scrollPosition) {
+                    setActiveSection(sections[i]);
+                    const cleanPath = sections[i] === 'hero' ? '/' : `/${sections[i]}`;
+                    if (window.location.pathname !== cleanPath && !window.location.pathname.startsWith('/projects') && !window.location.pathname.startsWith('/blog') && !window.location.pathname.startsWith('/admin')) {
+                        window.history.replaceState(null, '', cleanPath);
+                    }
+                    break;
+                }
+            }
+        };
+
+        window.addEventListener('scroll', handleScrollSpy, { passive: true });
+        handleScrollSpy();
+        return () => window.removeEventListener('scroll', handleScrollSpy);
+    }, [isHomePage, location.pathname]);
+
     const navLinks = [
-        { name: 'Work', to: 'work' },
-        { name: 'Services', to: 'services' },
-        { name: 'About', to: 'about' },
-        { name: 'Blog', to: 'blog' },
-        { name: 'Contact', to: 'contact' },
+        { name: 'Work', path: '/work', sectionId: 'work' },
+        { name: 'Services', path: '/services', sectionId: 'services' },
+        { name: 'About', path: '/about', sectionId: 'about' },
+        { name: 'Blog', path: '/blog', sectionId: 'blog' },
+        { name: 'Contact', path: '/contact', sectionId: 'contact' },
     ];
+
+    const scrollToSectionId = (sectionId) => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+            const offset = 80;
+            const bodyRect = document.body.getBoundingClientRect().top;
+            const elementRect = el.getBoundingClientRect().top;
+            const offsetPosition = elementRect - bodyRect - offset;
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    const handleNavClick = (link, e) => {
+        if (e) e.preventDefault();
+        setIsOpen(false);
+
+        if (link.path === '/blog') {
+            navigate('/blog');
+            return;
+        }
+
+        if (isHomePage) {
+            window.history.pushState(null, '', link.path);
+            scrollToSectionId(link.sectionId);
+        } else {
+            navigate(link.path);
+        }
+    };
+
+    const handleLogoClick = (e) => {
+        if (e) e.preventDefault();
+        setIsOpen(false);
+        if (isHomePage) {
+            window.history.pushState(null, '', '/');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            navigate('/');
+        }
+    };
+
+    const handleContactClick = (e) => {
+        if (e) e.preventDefault();
+        setIsOpen(false);
+        if (isHomePage) {
+            window.history.pushState(null, '', '/contact');
+            scrollToSectionId('contact');
+        } else {
+            navigate('/contact');
+        }
+    };
 
     return (
         <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3' : 'py-5'}`}>
             <div className="container mx-auto px-4 md:px-8 max-w-7xl">
                 <div className="flex justify-between items-center bg-[#0d1424]/85 backdrop-blur-xl border border-slate-800/80 px-6 md:px-8 py-3.5 rounded-full shadow-2xl shadow-black/50">
                     {/* Brand Logo */}
-                    {isHomePage ? (
-                        <ScrollLink to="hero" smooth={true} className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1.5">
-                            <span className="font-extrabold tracking-tight">Tariku</span>
-                            <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors font-medium">Negesa</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        </ScrollLink>
-                    ) : (
-                        <RouterLink to="/" className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1.5">
-                            <span className="font-extrabold tracking-tight">Tariku</span>
-                            <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors font-medium">Negesa</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                        </RouterLink>
-                    )}
+                    <Link
+                        to="/"
+                        onClick={handleLogoClick}
+                        className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1.5"
+                    >
+                        <span className="font-extrabold tracking-tight">Tariku</span>
+                        <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors font-medium">Negesa</span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    </Link>
 
-                    {/* Desktop Navigation */}
+                    {/* Desktop Navigation Links */}
                     <div className="hidden md:flex items-center space-x-8 lg:space-x-10">
-                        {navLinks.map((link) => (
-                            isHomePage ? (
-                                <ScrollLink
+                        {navLinks.map((link) => {
+                            const isActive = isHomePage
+                                ? activeSection === link.sectionId
+                                : location.pathname === link.path;
+
+                            return (
+                                <a
                                     key={link.name}
-                                    to={link.to}
-                                    smooth={true}
-                                    spy={true}
-                                    offset={-90}
-                                    activeClass="text-emerald-400 font-semibold"
-                                    className="text-sm font-medium text-slate-300 hover:text-white cursor-pointer transition-all relative group"
+                                    href={link.path}
+                                    onClick={(e) => handleNavClick(link, e)}
+                                    className={`text-sm font-medium transition-all relative group cursor-pointer ${
+                                        isActive ? 'text-emerald-400 font-semibold' : 'text-slate-300 hover:text-white'
+                                    }`}
                                 >
                                     {link.name}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-emerald-400 transition-all duration-300 group-hover:w-full" />
-                                </ScrollLink>
-                            ) : (
-                                <RouterLink
-                                    key={link.name}
-                                    to={`/#${link.to}`}
-                                    className="text-sm font-medium text-slate-300 hover:text-white cursor-pointer transition-all relative group"
-                                >
-                                    {link.name}
-                                    <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-emerald-400 transition-all duration-300 group-hover:w-full" />
-                                </RouterLink>
-                            )
-                        ))}
+                                    <span
+                                        className={`absolute -bottom-1 left-0 h-[2px] bg-emerald-400 transition-all duration-300 ${
+                                            isActive ? 'w-full' : 'w-0 group-hover:w-full'
+                                        }`}
+                                    />
+                                </a>
+                            );
+                        })}
                     </div>
 
-                    {/* Right Action CTA Pill from Mockup */}
+                    {/* Right Action CTA Pill */}
                     <div className="hidden md:flex items-center">
-                        {isHomePage ? (
-                            <ScrollLink
-                                to="contact"
-                                smooth={true}
-                                className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-full shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 flex items-center gap-1.5 cursor-pointer active:scale-95"
-                            >
-                                LET'S TALK
-                                <ArrowUpRight size={14} />
-                            </ScrollLink>
-                        ) : (
-                            <RouterLink
-                                to="/#contact"
-                                className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-full shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 flex items-center gap-1.5 cursor-pointer active:scale-95"
-                            >
-                                LET'S TALK
-                                <ArrowUpRight size={14} />
-                            </RouterLink>
-                        )}
+                        <button
+                            onClick={handleContactClick}
+                            className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-full shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 flex items-center gap-1.5 cursor-pointer active:scale-95"
+                        >
+                            LET'S TALK
+                            <ArrowUpRight size={14} />
+                        </button>
                     </div>
 
                     {/* Mobile Hamburger Toggle */}
@@ -152,51 +221,35 @@ const Navbar = () => {
                             </div>
 
                             <div className="flex-grow py-8 space-y-4">
-                                {navLinks.map((link) => (
-                                    isHomePage ? (
-                                        <ScrollLink
+                                {navLinks.map((link) => {
+                                    const isActive = isHomePage
+                                        ? activeSection === link.sectionId
+                                        : location.pathname === link.path;
+
+                                    return (
+                                        <a
                                             key={link.name}
-                                            to={link.to}
-                                            smooth={true}
-                                            spy={true}
-                                            offset={-90}
-                                            onClick={() => setIsOpen(false)}
-                                            className="block px-4 py-3 text-base font-medium text-slate-300 hover:text-emerald-400 hover:bg-slate-800/40 rounded-xl transition-all cursor-pointer"
+                                            href={link.path}
+                                            onClick={(e) => handleNavClick(link, e)}
+                                            className={`block px-4 py-3 text-base font-medium rounded-xl transition-all cursor-pointer ${
+                                                isActive
+                                                    ? 'text-emerald-400 bg-emerald-500/10 font-bold'
+                                                    : 'text-slate-300 hover:text-emerald-400 hover:bg-slate-800/40'
+                                            }`}
                                         >
                                             {link.name}
-                                        </ScrollLink>
-                                    ) : (
-                                        <RouterLink
-                                            key={link.name}
-                                            to={`/#${link.to}`}
-                                            onClick={() => setIsOpen(false)}
-                                            className="block px-4 py-3 text-base font-medium text-slate-300 hover:text-emerald-400 hover:bg-slate-800/40 rounded-xl transition-all cursor-pointer"
-                                        >
-                                            {link.name}
-                                        </RouterLink>
-                                    )
-                                ))}
+                                        </a>
+                                    );
+                                })}
                             </div>
 
                             <div className="pt-6 border-t border-slate-800">
-                                {isHomePage ? (
-                                    <ScrollLink
-                                        to="contact"
-                                        smooth={true}
-                                        onClick={() => setIsOpen(false)}
-                                        className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-center rounded-xl block shadow-lg shadow-emerald-500/20"
-                                    >
-                                        LET'S TALK
-                                    </ScrollLink>
-                                ) : (
-                                    <RouterLink
-                                        to="/#contact"
-                                        onClick={() => setIsOpen(false)}
-                                        className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-center rounded-xl block shadow-lg shadow-emerald-500/20"
-                                    >
-                                        LET'S TALK
-                                    </RouterLink>
-                                )}
+                                <button
+                                    onClick={handleContactClick}
+                                    className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-center rounded-xl block shadow-lg shadow-emerald-500/20"
+                                >
+                                    LET'S TALK
+                                </button>
                             </div>
                         </motion.div>
                     </>

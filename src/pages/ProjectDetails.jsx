@@ -22,7 +22,7 @@ import {
     Building2,
     Calendar
 } from 'lucide-react';
-import { initialProjects, matchProjectDetails } from '../data/portfolio';
+import { initialProjects, getMergedProjects, resolveProject } from '../data/portfolio';
 import ProjectDeviceMockup from '../components/ProjectDeviceMockup';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -30,13 +30,12 @@ import Footer from '../components/Footer';
 const ProjectDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [project, setProject] = useState(null);
+    const [project, setProject] = useState(() => resolveProject(initialProjects, id));
     const [allProjects, setAllProjects] = useState(initialProjects);
     const [copied, setCopied] = useState(false);
-    const [activeTab, setActiveTab] = useState('preview'); // 'preview' | 'architecture' | 'code'
+    const [activeTab, setActiveTab] = useState('preview');
 
     useEffect(() => {
-        // Fetch from API or fallback
         const loadProject = async () => {
             let list = initialProjects;
             try {
@@ -44,93 +43,15 @@ const ProjectDetails = () => {
                 if (response.ok) {
                     const data = await response.json();
                     if (Array.isArray(data) && data.length > 0) {
-                        // Merge database items with rich project templates
-                        const merged = data.map(dbItem => {
-                            const template = matchProjectDetails(dbItem) || initialProjects.find(p => p.id === dbItem.id) || {};
-                            const rawImg = dbItem.image_url;
-                            const isUnsplash = rawImg && rawImg.includes('unsplash.com');
-                            const isTallUpload = rawImg && (rawImg.includes('1770844') || rawImg.includes('1771012'));
-                            const finalImg = (!rawImg || isUnsplash || isTallUpload) ? (template.image_url || rawImg) : rawImg;
-
-                            return {
-                                ...template,
-                                ...dbItem,
-                                slug: template.slug || dbItem.slug || `project-${dbItem.id}`,
-                                layout: template.layout || (dbItem.title && (dbItem.title.toLowerCase().includes('kid') || dbItem.title.toLowerCase().includes('learn')) ? 'banner' : undefined),
-                                image_url: finalImg
-                            };
-                        });
-
-                        // Preserve initialProjects templates
-                        const fullList = [...merged];
-                        initialProjects.forEach(initP => {
-                            const exists = fullList.some(p => 
-                                p.slug === initP.slug || 
-                                (p.title && initP.title && p.title.toLowerCase().trim() === initP.title.toLowerCase().trim())
-                            );
-                            if (!exists) {
-                                fullList.push(initP);
-                            }
-                        });
-                        list = fullList;
+                        list = getMergedProjects(data);
                     }
                 }
             } catch (err) {
-                console.error('Error fetching projects:', err);
+                console.error('Error fetching projects in details:', err);
             }
 
             setAllProjects(list);
-
-            // Unambiguous project resolution
-            const needle = String(id || '').toLowerCase().trim();
-            let found = null;
-
-            if (needle.includes('kid') || needle.includes('learn') || needle.includes('kg') || needle === '4') {
-                found = list.find(p => 
-                    p.slug === 'kids-learning-android-app' || 
-                    (p.title && (p.title.toLowerCase().includes('kid') || p.title.toLowerCase().includes('learn'))) ||
-                    String(p.id) === '4'
-                ) || initialProjects.find(p => p.slug === 'kids-learning-android-app');
-            } else if (needle.includes('weekly') || needle.includes('report') || needle.includes('automation') || needle === '5') {
-                found = list.find(p => 
-                    p.slug === 'weekly-report-automation' || 
-                    (p.title && p.title.toLowerCase().includes('report')) ||
-                    String(p.id) === '5'
-                ) || initialProjects.find(p => p.slug === 'weekly-report-automation');
-            } else if (needle.includes('qr') || needle === '1') {
-                found = list.find(p => 
-                    p.slug === 'qr-studio-generator-platform' || 
-                    (p.title && p.title.toLowerCase().includes('qr')) ||
-                    String(p.id) === '1'
-                ) || initialProjects.find(p => p.slug === 'qr-studio-generator-platform');
-            } else if (needle.includes('tour') || needle.includes('sentiment') || needle.includes('wolaita') || needle.includes('wolkite') || needle === '2') {
-                found = list.find(p => 
-                    p.slug === 'tourism-management-sentiment-analysis' || 
-                    (p.title && p.title.toLowerCase().includes('tour')) ||
-                    String(p.id) === '2'
-                ) || initialProjects.find(p => p.slug === 'tourism-management-sentiment-analysis');
-            } else if (needle.includes('menu') || needle.includes('restaurant') || needle.includes('hotel') || needle === '3') {
-                found = list.find(p => 
-                    p.slug === 'digital-menu-restaurant-management' || 
-                    (p.title && p.title.toLowerCase().includes('menu')) ||
-                    String(p.id) === '3'
-                ) || initialProjects.find(p => p.slug === 'digital-menu-restaurant-management');
-            }
-
-            // Fallback exact slug or id lookup
-            if (!found) {
-                found = list.find(p => 
-                    String(p.id) === String(id) || 
-                    p.slug === id || 
-                    (p.title && p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').includes(needle))
-                );
-            }
-
-            // Final fallback to initialProjects
-            if (!found) {
-                found = initialProjects.find(p => String(p.id) === String(id) || p.slug === id) || list[0] || initialProjects[0];
-            }
-
+            const found = resolveProject(list, id);
             setProject(found);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
@@ -346,7 +267,7 @@ const ProjectDetails = () => {
                                     exit={{ opacity: 0 }}
                                     className="max-w-5xl mx-auto"
                                 >
-                                    <ProjectDeviceMockup project={project} className="shadow-2xl" />
+                                    <ProjectDeviceMockup project={project} className="shadow-2xl" isDetailsPage={true} />
                                 </motion.div>
                             )}
 

@@ -16,12 +16,15 @@ function Home() {
     useEffect(() => {
         if (hash) {
             const section = hash.replace('#', '');
-            scroller.scrollTo(section, {
-                duration: 800,
-                delay: 0,
-                smooth: 'easeInOutQuart',
-                offset: -100
-            });
+            const targetEl = document.getElementById(section);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                setTimeout(() => {
+                    const el = document.getElementById(section);
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
         }
     }, [hash]);
 

@@ -267,7 +267,7 @@ const KidssomingAndroidPreview = () => (
 
 // --- Master Project Preview Component (No Fake Browser Frames) ---
 
-export const ProjectDeviceMockup = ({ project, className = "" }) => {
+export const ProjectDeviceMockup = ({ project, className = "", isDetailsPage = false }) => {
     const [imgError, setImgError] = React.useState(false);
     const rawImageUrl = project.image_url || project.imageUrl;
     const displayImage = rawImageUrl ? getDisplayImageUrl(rawImageUrl) : null;
@@ -304,7 +304,7 @@ export const ProjectDeviceMockup = ({ project, className = "" }) => {
     return (
         <div className={`relative w-full group overflow-hidden ${className}`}>
             {/* Clean, Frame-Free Image Container */}
-            <div className="relative bg-[#070b14] rounded-2xl overflow-hidden border border-slate-800/80 h-64 sm:h-72 md:h-80 w-full flex items-center justify-center transition-all duration-500 group-hover:border-emerald-500/40">
+            <div className={`relative bg-[#070b14] rounded-2xl overflow-hidden border border-slate-800/80 ${isDetailsPage ? 'h-72 sm:h-96 md:h-[460px]' : 'h-64 sm:h-72 md:h-80'} w-full flex items-center justify-center transition-all duration-500 group-hover:border-emerald-500/40`}>
                 {hasCustomImage && !imgError ? (
                     <div className="relative w-full h-full flex items-center justify-center bg-[#070b14] overflow-hidden">
                         <img
@@ -333,12 +333,14 @@ export const ProjectDeviceMockup = ({ project, className = "" }) => {
                 </div>
 
                 {/* Hover Quick Action Indicator */}
-                <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                    <div className="bg-emerald-500 text-slate-950 font-bold px-4 py-2 rounded-full shadow-xl flex items-center gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-300 text-xs">
-                        <span>VIEW DETAILS</span>
-                        <ArrowUpRight size={16} className="stroke-[2.5]" />
+                {!isDetailsPage && (
+                    <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
+                        <div className="bg-emerald-500 text-slate-950 font-bold px-4 py-2 rounded-full shadow-xl flex items-center gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-300 text-xs">
+                            <span>VIEW DETAILS</span>
+                            <ArrowUpRight size={16} className="stroke-[2.5]" />
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
         </div>
     );

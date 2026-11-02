@@ -1,10 +1,86 @@
 export const initialProjects = [
     {
         id: 1,
+        slug: "weekly-report-automation",
+        title: "Weekly Report Automation",
+        subtitle: "Enterprise reporting dashboard with automated sentiment analysis & multi-source document ingestion.",
+        category: "AI PIPELINE",
+        liveBadge: "AI & NLP ENGINE",
+        metaFooter: "2024 / FULL STACK / AI PIPELINE",
+        ctaText: "CASE STUDY",
+        deviceType: "laptop",
+        timeline: "4 Months / 2024",
+        role: "Lead Full-Stack & ML Engineer",
+        client: "Enterprise Operations",
+        status: "Production Deployed",
+        price: 0,
+        image_url: "/projects/weekly-report.jpg",
+        tech_stack: "PYTHON, NLP, FASTAPI, PYTORCH, CI/CD",
+        techBadges: ["PYTHON", "NLP", "FASTAPI", "PYTORCH", "CI/CD"],
+        description: "Enterprise reporting dashboard with automated sentiment analysis, automated data extraction, generating actionable insights from hundreds of spreadsheets and documents. Custom-trained summarization pipeline.",
+        overview: "A mission-critical enterprise intelligence system engineered to eliminate manual report synthesis. The platform automatically ingests, normalizes, and extracts actionable insights from hundreds of distributed spreadsheets, client feedback logs, and operational reports each week. Leveraging custom fine-tuned transformer models, it produces executive summaries with quantified sentiment metrics and anomaly detection in seconds.",
+        impactStats: [
+            { value: "99.4%", label: "Extraction Accuracy" },
+            { value: "12x", label: "Faster Report Turnaround" },
+            { value: "450+", label: "Weekly Docs Processed" },
+            { value: "< 1.5s", label: "Pipeline Latency" }
+        ],
+        challenges: [
+            "Heterogeneous data formats across disparate departments (Excel, PDF, CSV, unstructured emails).",
+            "Latency bottlenecks when running multi-stage NLP models over hundreds of weekly documents.",
+            "Requirement for strict enterprise data privacy and deterministic summary audits."
+        ],
+        solutions: [
+            "Built an asynchronous ingestion worker pool using FastAPI and Celery with Redis queue buffering.",
+            "Distilled and quantized a domain-specific PyTorch NLP transformer to achieve sub-second document scoring.",
+            "Created an interactive React dashboard with drill-down audit trails for every extracted metric."
+        ],
+        architecture: "Distributed microservices architecture utilizing FastAPI for inference endpoints, PostgreSQL with pgvector for semantic caching, and a containerized Docker pipeline orchestrated with automated CI/CD validation.",
+        keyFeatures: [
+            {
+                title: "Automated Document Ingestion",
+                description: "Seamless parsing and schema normalization across PDF, XLSX, and CSV with schema drift detection."
+            },
+            {
+                title: "Custom NLP Summarization",
+                description: "Fine-tuned transformer pipeline that condenses 40-page operational logs into executive action points."
+            },
+            {
+                title: "Multi-Dimensional Sentiment Analysis",
+                description: "Categorizes stakeholder feedback into sentiment scores, urgency levels, and departmental tags."
+            },
+            {
+                title: "Executive Export Suite",
+                description: "One-click generation of branded PDF and PowerPoint executive decks with live vector charts."
+            }
+        ],
+        techDetails: {
+            frontend: ["React.js", "Tailwind CSS", "Framer Motion", "Recharts"],
+            backend: ["FastAPI", "Python 3.11", "Celery", "Redis"],
+            ai_ml: ["PyTorch", "Hugging Face Transformers", "NLTK", "SpaCy"],
+            database: ["PostgreSQL", "SQLAlchemy"],
+            devops: ["Docker", "GitHub Actions", "Nginx", "Linux Server"]
+        },
+        codeSnippet: `async def generate_weekly_summary(batch_id: str, db: Session):
+    documents = await document_loader.fetch_batch(batch_id)
+    embeddings = embedding_engine.encode([doc.content for doc in documents])
+    sentiment_scores = sentiment_classifier.predict(embeddings)
+    summary = summarizer.generate_action_points(embeddings, max_tokens=500)
+    return ReportResponse(
+        summary=summary, 
+        sentiment_index=sentiment_scores.mean(),
+        processed_count=len(documents)
+    )`,
+        source_url: "https://github.com/TarikuYe",
+        github_url: "https://github.com/TarikuYe",
+        demo_url: "#"
+    },
+    {
+        id: 2,
         slug: "qr-studio-generator-platform",
         title: "QR Studio — Custom QR Code Generator & Design Platform",
         subtitle: "A modern, full-stack QR Code Generator and customization platform with vector rendering & analytics.",
-        category: "FULL STACK",
+        category: "HOSPITALITY TECH",
         liveBadge: "LIVE SYSTEM",
         metaFooter: "2024 / FULL STACK",
         ctaText: "LIVE DEMO",
@@ -15,8 +91,8 @@ export const initialProjects = [
         status: "Production Deployed",
         price: 0,
         image_url: "/projects/qr-studio.jpg",
-        tech_stack: "REACT, NODE.JS, POSTGRES, CANVAS API",
-        techBadges: ["REACT", "NODE.JS", "POSTGRES", "CANVAS API"],
+        tech_stack: "REACT, TAILWIND CSS, POSTGRESQL, SOCKET.IO",
+        techBadges: ["REACT", "TAILWIND CSS", "POSTGRESQL", "SOCKET.IO"],
         description: "A modern, full-stack QR Code Generator and customization platform that enables users to create high-resolution custom vector QR codes (SVG, PNG, EPS) with custom branding, analytics, and dynamic redirect capabilities.",
         overview: "QR Studio is a professional-grade design utility and redirect engine. Unlike generic generators that produce pixelated outputs, QR Studio renders pixel-perfect vector geometry with customizable gradient eye patterns, embedded brand emblems, error-correction tuning, and real-time scan analytics. Built to handle enterprise marketing campaigns and contactless operations.",
         impactStats: [
@@ -43,70 +119,69 @@ export const initialProjects = [
             },
             {
                 title: "Lossless Vector Formats",
-                description: "Instant export to SVG, high-DPI PNG, and print-ready EPS formats for large-scale physical media."
+                description: "Instant export presets for SVG vector, high-DPI print-ready PNG, and lightweight web embeds."
             },
             {
-                title: "Dynamic Links & Analytics",
-                description: "Update destination URLs post-printing while tracking scan volume, geolocation, and device types."
+                title: "Scan Analytics & Tracking",
+                description: "Monitors daily scans, geo-distribution, browser agents, and conversion paths in real time."
             },
             {
-                title: "Pre-Configured Presets",
-                description: "One-click templates for Wi-Fi credentials, vCards, event passes, and cryptocurrency wallets."
+                title: "Dynamic Target Switching",
+                description: "Allows marketing administrators to alter the destination URL without reprinting physical collateral."
             }
         ],
         techDetails: {
             frontend: ["React.js", "Tailwind CSS", "HTML5 Canvas API", "Lucide React"],
-            backend: ["Node.js", "Express.js", "RESTful Architecture"],
+            backend: ["Node.js", "Express.js", "RESTful API"],
             ai_ml: [],
-            database: ["PostgreSQL", "Redis"],
-            devops: ["Vercel", "Render", "Postman"]
+            database: ["PostgreSQL", "Redis Caching"],
+            devops: ["Docker", "Vercel", "GitHub Actions"]
         },
-        codeSnippet: `export const renderVectorQR = ({ data, colorScheme, logoUrl, errorCorrection }) => {
-    const qrMatrix = QRCodeGenerator.createMatrix(data, { errorCorrection: 'H' });
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    applyGradientShading(ctx, colorScheme);
-    drawCustomEyeModules(ctx, qrMatrix.getEyes());
-    
-    if (logoUrl) {
-        compositeCenterEmblem(ctx, logoUrl, canvas.width / 2, canvas.height / 2);
-    }
-    return canvas.toDataURL('image/png');
+        codeSnippet: `export const generateCustomVectorQR = (payload, options) => {
+    const matrix = QRCodeMatrix.create(payload, {
+        errorCorrectionLevel: options.ecLevel || 'H',
+        version: options.version || 4
+    });
+    const svgPath = renderVectorElements(matrix, {
+        eyeShape: options.eyeShape,
+        dotStyle: options.dotStyle,
+        gradient: options.gradient
+    });
+    return exportAsSVG(svgPath, options.logoAttachment);
 };`,
         source_url: "https://github.com/TarikuYe",
         github_url: "https://github.com/TarikuYe",
         demo_url: "#"
     },
     {
-        id: 2,
+        id: 3,
         slug: "tourism-management-sentiment-analysis",
         title: "Web & Android Tourism Management System with Sentiment Analysis for Wolaita Zone",
-        subtitle: "Integrated tourism ecosystem with AI-powered review sentiment analysis for Wolaita Zone.",
-        category: "FULL STACK / AI",
+        subtitle: "Full-stack tourist ecosystem with Amharic/English NLP feedback analytics & GIS mapping.",
+        category: "WEB & ANDROID",
         liveBadge: "17+ / WEB + ANDROID",
-        metaFooter: "2024 / FULL STACK",
-        ctaText: "CASE STUDY",
-        deviceType: "desktop",
+        metaFooter: "2024 / WEB + ANDROID",
+        ctaText: "VIEW DETAILS",
+        deviceType: "laptop",
         timeline: "5 Months / 2024",
-        role: "Full-Stack System Architect & ML Lead",
-        client: "Tourism & Culture Bureau",
-        status: "Completed & Evaluated",
+        role: "Full-Stack & Mobile Developer",
+        client: "Wolaita Zone Tourism Dept.",
+        status: "Production Deployed",
         price: 0,
         image_url: "/projects/tourism-management.jpg",
         tech_stack: "REACT, FASTAPI (NLP), POSTGRESQL, FIREBASE / ANDROID",
         techBadges: ["REACT", "FASTAPI (NLP)", "POSTGRESQL", "FIREBASE / ANDROID"],
-        description: "A full-stack tourism management and review analytics platform developed for Wolaita Zone. Features tourist destination booking, feedback sentiment classification with fine-tuned multilingual BERT model, and automated hotel/service rating.",
-        overview: "Developed as an end-to-end regional digital transformation initiative for Wolaita Zone, Ethiopia. The system bridges local tourism administration, hospitality businesses, and international/domestic travelers. It features an interactive administrative web portal for regional authorities, coupled with an AI-driven feedback engine that classifies tourist reviews into actionable satisfaction indices.",
+        description: "A full-stack tourist management platform developed for Wolaita Zone, Ethiopia, featuring interactive destination exploration, verified hospitality bookings, and machine learning sentiment analysis on traveler reviews.",
+        overview: "A comprehensive digital tourism infrastructure engineered for regional tourism authorities and international travelers. Built to boost hospitality transparency and visitor engagement, the platform pairs an interactive React web portal with a native Android application. Behind the scenes, an integrated NLP model parses tourist reviews in real time to categorize public sentiment, pinpoint service gaps, and highlight regional attractions.",
         impactStats: [
-            { value: "17+", label: "Destinations & Hotspots" },
-            { value: "91.8%", label: "NLP Classification F1-Score" },
-            { value: "100%", label: "Bilingual (English & Amharic)" },
-            { value: "3x", label: "Faster Booking Inquiries" }
+            { value: "17+", label: "Destinations Mapped" },
+            { value: "94.2%", label: "NLP Sentiment Accuracy" },
+            { value: "4.8/5", label: "Tourist User Rating" },
+            { value: "100%", label: "Mobile Responsive" }
         ],
         challenges: [
-            "Analyzing mixed-language (English and Amharic) visitor reviews with low-resource training datasets.",
-            "Synchronizing live booking queries and hotel capacities between the Android client and admin web portal.",
+            "Accurately evaluating sentiment across localized vernacular, colloquial expressions, and multilingual feedback.",
+            "Synchronizing bookings and inquiries between web dashboards and the native Android client.",
             "Designing an intuitive dashboard for non-technical municipal administrators to monitor hospitality KPIs."
         ],
         solutions: [
@@ -157,7 +232,7 @@ async def analyze_tourist_feedback(review: ReviewSubmission):
         demo_url: "#"
     },
     {
-        id: 3,
+        id: 4,
         slug: "digital-menu-restaurant-management",
         title: "Digital Menu System for Hotel & Restaurant",
         subtitle: "Contactless digital dining platform with real-time kitchen order display & inventory management.",
@@ -235,7 +310,7 @@ async def analyze_tourist_feedback(review: ReviewSubmission):
         demo_url: "#"
     },
     {
-        id: 4,
+        id: 5,
         slug: "kids-learning-android-app",
         title: "Kids Learning Android App (KG Students)",
         subtitle: "Interactive phonics & early childhood educational application built with Kotlin and Firebase.",
@@ -318,82 +393,6 @@ async def analyze_tourist_feedback(review: ReviewSubmission):
         source_url: "https://github.com/TarikuYe",
         github_url: "https://github.com/TarikuYe",
         demo_url: "#"
-    },
-    {
-        id: 5,
-        slug: "weekly-report-automation",
-        title: "Weekly Report Automation",
-        subtitle: "Enterprise reporting dashboard with automated sentiment analysis & multi-source document ingestion.",
-        category: "AI PIPELINE",
-        liveBadge: "CASE STUDY",
-        metaFooter: "2024 / FULL STACK / AI PIPELINE",
-        ctaText: "CASE STUDY",
-        deviceType: "laptop",
-        timeline: "4 Months / 2024",
-        role: "Lead Full-Stack & ML Engineer",
-        client: "Enterprise Operations",
-        status: "Production Deployed",
-        price: 0,
-        image_url: "/projects/weekly-report.jpg",
-        tech_stack: "PYTHON, NLP, FASTAPI, PYTORCH, CI/CD",
-        techBadges: ["PYTHON", "NLP", "FASTAPI", "PYTORCH", "CI/CD"],
-        description: "Enterprise reporting dashboard with automated sentiment analysis, automated data extraction, generating actionable insights from hundreds of spreadsheets and documents. Custom-trained summarization pipeline.",
-        overview: "A mission-critical enterprise intelligence system engineered to eliminate manual report synthesis. The platform automatically ingests, normalizes, and extracts actionable insights from hundreds of distributed spreadsheets, client feedback logs, and operational reports each week. Leveraging custom fine-tuned transformer models, it produces executive summaries with quantified sentiment metrics and anomaly detection in seconds.",
-        impactStats: [
-            { value: "99.4%", label: "Extraction Accuracy" },
-            { value: "12x", label: "Faster Report Turnaround" },
-            { value: "450+", label: "Weekly Docs Processed" },
-            { value: "< 1.5s", label: "Pipeline Latency" }
-        ],
-        challenges: [
-            "Heterogeneous data formats across disparate departments (Excel, PDF, CSV, unstructured emails).",
-            "Latency bottlenecks when running multi-stage NLP models over hundreds of weekly documents.",
-            "Requirement for strict enterprise data privacy and deterministic summary audits."
-        ],
-        solutions: [
-            "Built an asynchronous ingestion worker pool using FastAPI and Celery with Redis queue buffering.",
-            "Distilled and quantized a domain-specific PyTorch NLP transformer to achieve sub-second document scoring.",
-            "Created an interactive React dashboard with drill-down audit trails for every extracted metric."
-        ],
-        architecture: "Distributed microservices architecture utilizing FastAPI for inference endpoints, PostgreSQL with pgvector for semantic caching, and a containerized Docker pipeline orchestrated with automated CI/CD validation.",
-        keyFeatures: [
-            {
-                title: "Automated Document Ingestion",
-                description: "Seamless parsing and schema normalization across PDF, XLSX, and CSV with schema drift detection."
-            },
-            {
-                title: "Custom NLP Summarization",
-                description: "Fine-tuned transformer pipeline that condenses 40-page operational logs into executive action points."
-            },
-            {
-                title: "Multi-Dimensional Sentiment Analysis",
-                description: "Categorizes stakeholder feedback into sentiment scores, urgency levels, and departmental tags."
-            },
-            {
-                title: "Executive Export Suite",
-                description: "One-click generation of branded PDF and PowerPoint executive decks with live vector charts."
-            }
-        ],
-        techDetails: {
-            frontend: ["React.js", "Tailwind CSS", "Framer Motion", "Recharts"],
-            backend: ["FastAPI", "Python 3.11", "Celery", "Redis"],
-            ai_ml: ["PyTorch", "Hugging Face Transformers", "NLTK", "SpaCy"],
-            database: ["PostgreSQL", "SQLAlchemy"],
-            devops: ["Docker", "GitHub Actions", "Nginx", "Linux Server"]
-        },
-        codeSnippet: `async def generate_weekly_summary(batch_id: str, db: Session):
-    documents = await document_loader.fetch_batch(batch_id)
-    embeddings = embedding_engine.encode([doc.content for doc in documents])
-    sentiment_scores = sentiment_classifier.predict(embeddings)
-    summary = summarizer.generate_action_points(embeddings, max_tokens=500)
-    return ReportResponse(
-        summary=summary, 
-        sentiment_index=sentiment_scores.mean(),
-        processed_count=len(documents)
-    )`,
-        source_url: "https://github.com/TarikuYe",
-        github_url: "https://github.com/TarikuYe",
-        demo_url: "#"
     }
 ];
 
@@ -401,30 +400,130 @@ async def analyze_tourist_feedback(review: ReviewSubmission):
 export const matchProjectDetails = (dbItem) => {
     if (!dbItem) return null;
     const title = (dbItem.title || '').toLowerCase();
+    const slug = (dbItem.slug || '').toLowerCase();
     const id = Number(dbItem.id);
 
-    // 1. Semantic match by title keywords first
-    if (title.includes('kid') || title.includes('learn') || title.includes('kg') || title.includes('student')) {
-        return initialProjects.find(p => p.slug === 'kids-learning-android-app') || initialProjects[3];
-    }
-    if (title.includes('qr')) {
-        return initialProjects.find(p => p.slug === 'qr-studio-generator-platform') || initialProjects[0];
-    }
-    if (title.includes('tour') || title.includes('sentiment') || title.includes('wolaita') || title.includes('wolkite')) {
-        return initialProjects.find(p => p.slug === 'tourism-management-sentiment-analysis') || initialProjects[1];
-    }
-    if (title.includes('menu') || title.includes('restaurant') || title.includes('hotel') || title.includes('dining')) {
-        return initialProjects.find(p => p.slug === 'digital-menu-restaurant-management') || initialProjects[2];
-    }
-    if (title.includes('report') || title.includes('automation') || title.includes('weekly')) {
-        return initialProjects.find(p => p.slug === 'weekly-report-automation') || initialProjects[4];
+    // 1. Direct slug match
+    if (slug) {
+        const bySlug = initialProjects.find(p => p.slug === slug);
+        if (bySlug) return bySlug;
     }
 
-    // 2. Match by ID if available
+    // 2. Semantic title keywords
+    if (title.includes('kid') || title.includes('learn') || title.includes('kg') || title.includes('student')) {
+        return initialProjects.find(p => p.slug === 'kids-learning-android-app');
+    }
+    if (title.includes('qr')) {
+        return initialProjects.find(p => p.slug === 'qr-studio-generator-platform');
+    }
+    if (title.includes('tour') || title.includes('sentiment') || title.includes('wolaita') || title.includes('wolkite')) {
+        return initialProjects.find(p => p.slug === 'tourism-management-sentiment-analysis');
+    }
+    if (title.includes('menu') || title.includes('restaurant') || title.includes('hotel') || title.includes('dining')) {
+        return initialProjects.find(p => p.slug === 'digital-menu-restaurant-management');
+    }
+    if (title.includes('report') || title.includes('automation') || title.includes('weekly')) {
+        return initialProjects.find(p => p.slug === 'weekly-report-automation');
+    }
+
+    // 3. Match by ID fallback
     const byId = initialProjects.find(p => p.id === id);
     if (byId) return byId;
 
-    return initialProjects[0];
+    return null;
+};
+
+// Merges database rows with the 5 canonical featured projects in exact order
+export const getMergedProjects = (dbProjects = []) => {
+    if (!Array.isArray(dbProjects) || dbProjects.length === 0) {
+        return initialProjects;
+    }
+
+    // Map each canonical project template with database overrides
+    const mergedList = initialProjects.map(template => {
+        const dbMatch = dbProjects.find(db => {
+            const matched = matchProjectDetails(db);
+            return matched && matched.slug === template.slug;
+        });
+
+        if (!dbMatch) return template;
+
+        const rawImg = dbMatch.image_url;
+        const isUnsplash = rawImg && rawImg.includes('unsplash.com');
+        const isTallUpload = rawImg && (rawImg.includes('1770844') || rawImg.includes('1771012'));
+        const finalImg = (!rawImg || isUnsplash || isTallUpload) ? template.image_url : rawImg;
+
+        return {
+            ...template,
+            ...dbMatch,
+            id: dbMatch.id || template.id,
+            slug: template.slug,
+            layout: template.layout,
+            title: dbMatch.title || template.title,
+            description: dbMatch.description || template.description,
+            image_url: finalImg,
+            tech_stack: dbMatch.tech_stack || template.tech_stack,
+            github_url: dbMatch.github_url || template.github_url,
+            demo_url: dbMatch.demo_url || template.demo_url,
+            source_url: dbMatch.source_url || template.source_url
+        };
+    });
+
+    // Also include any extra custom projects created in admin that don't match standard templates
+    dbProjects.forEach(db => {
+        const matched = matchProjectDetails(db);
+        if (!matched) {
+            mergedList.push({
+                ...db,
+                slug: db.slug || `project-${db.id}`,
+                techBadges: (db.tech_stack || '').split(',').map(s => s.trim()).filter(Boolean)
+            });
+        }
+    });
+
+    return mergedList;
+};
+
+// Unambiguously resolves any project by id, slug, or keyword
+export const resolveProject = (projectList, idParam) => {
+    const list = Array.isArray(projectList) && projectList.length > 0 ? projectList : initialProjects;
+    if (!idParam) return list[0];
+
+    const needle = String(idParam).toLowerCase().trim();
+
+    // 1. Direct slug match
+    let match = list.find(p => p.slug && p.slug.toLowerCase() === needle);
+    if (match) return match;
+
+    // 2. Direct ID match
+    match = list.find(p => String(p.id) === needle);
+    if (match) return match;
+
+    // 3. Keyword detection
+    if (needle.includes('kid') || needle.includes('learn') || needle.includes('kg')) {
+        return list.find(p => p.slug === 'kids-learning-android-app') || initialProjects.find(p => p.slug === 'kids-learning-android-app');
+    }
+    if (needle.includes('weekly') || needle.includes('report') || needle.includes('automation')) {
+        return list.find(p => p.slug === 'weekly-report-automation') || initialProjects.find(p => p.slug === 'weekly-report-automation');
+    }
+    if (needle.includes('qr')) {
+        return list.find(p => p.slug === 'qr-studio-generator-platform') || initialProjects.find(p => p.slug === 'qr-studio-generator-platform');
+    }
+    if (needle.includes('tour') || needle.includes('sentiment') || needle.includes('wolaita') || needle.includes('wolkite')) {
+        return list.find(p => p.slug === 'tourism-management-sentiment-analysis') || initialProjects.find(p => p.slug === 'tourism-management-sentiment-analysis');
+    }
+    if (needle.includes('menu') || needle.includes('restaurant') || needle.includes('hotel') || needle.includes('dining')) {
+        return list.find(p => p.slug === 'digital-menu-restaurant-management') || initialProjects.find(p => p.slug === 'digital-menu-restaurant-management');
+    }
+
+    // 4. Fuzzy title match
+    match = list.find(p => {
+        const titleSlug = (p.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        return titleSlug.includes(needle) || needle.includes(titleSlug);
+    });
+    if (match) return match;
+
+    return list[0];
 };
 
 export const initialBlogPosts = [

@@ -9,7 +9,7 @@ import {
     Smartphone 
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { initialProjects, matchProjectDetails } from '../data/portfolio';
+import { initialProjects, getMergedProjects } from '../data/portfolio';
 import ProjectDeviceMockup from './ProjectDeviceMockup';
 
 // --- Quick Modal for In-Place Inspection ---
@@ -260,8 +260,8 @@ const HorizontalBannerCard = ({ project, onQuickView: _onQuickView }) => {
 
 // --- Master Projects Component ---
 const Projects = () => {
-    const [projects, setProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [projects, setProjects] = useState(initialProjects);
+    const [loading, setLoading] = useState(false);
     const [selectedProject, setSelectedProject] = useState(null);
 
     useEffect(() => {
@@ -271,33 +271,12 @@ const Projects = () => {
                 if (response.ok) {
                     const data = await response.json();
                     if (Array.isArray(data) && data.length > 0) {
-                        // Merge with initial rich properties using semantic matcher
-                        const merged = data.map(dbItem => {
-                            const template = matchProjectDetails(dbItem) || {};
-                            const rawImg = dbItem.image_url;
-                            const isUnsplash = rawImg && rawImg.includes('unsplash.com');
-                            const isTallUpload = rawImg && (rawImg.includes('1770844') || rawImg.includes('1771012'));
-                            const finalImg = (!rawImg || isUnsplash || isTallUpload) ? (template.image_url || rawImg) : rawImg;
-
-                            return { 
-                                ...template, 
-                                ...dbItem,
-                                slug: template.slug || dbItem.slug || `project-${dbItem.id}`,
-                                layout: template.layout || (dbItem.title && (dbItem.title.toLowerCase().includes('kid') || dbItem.title.toLowerCase().includes('learn')) ? 'banner' : undefined),
-                                image_url: finalImg
-                            };
-                        });
-                        setProjects(merged);
-                        return;
+                        setProjects(getMergedProjects(data));
                     }
                 }
             } catch (err) {
                 console.error('Database fetch projects error:', err);
-            } finally {
-                setLoading(false);
             }
-            // Fallback to high-fidelity initialProjects
-            setProjects(initialProjects);
         };
 
         fetchProjects();
@@ -305,18 +284,18 @@ const Projects = () => {
 
     // Explicitly identify the Kids Learning App for the horizontal banner card
     const bannerProject = projects.find(p => 
+        p.slug === 'kids-learning-android-app' || 
         p.layout === 'banner' || 
-        (p.title && (p.title.toLowerCase().includes('kid') || p.title.toLowerCase().includes('learn'))) ||
-        (p.slug && p.slug.includes('kid'))
-    ) || projects.find(p => p.id === 4) || projects[3];
+        (p.title && (p.title.toLowerCase().includes('kid') || p.title.toLowerCase().includes('learn')))
+    ) || projects[4];
 
-    // Grid contains all other projects (up to 4)
+    // Grid contains all other 4 primary featured projects (Weekly Report, QR Studio, Tourism, Digital Menu)
     const gridProjects = projects
-        .filter(p => p.id !== bannerProject?.id && p.slug !== bannerProject?.slug)
+        .filter(p => p.slug !== bannerProject?.slug && p.id !== bannerProject?.id)
         .slice(0, 4);
 
     const extraProjects = projects
-        .filter(p => p.id !== bannerProject?.id && p.slug !== bannerProject?.slug)
+        .filter(p => p.slug !== bannerProject?.slug && p.id !== bannerProject?.id)
         .slice(4);
 
     return (

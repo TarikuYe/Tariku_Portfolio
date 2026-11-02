@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
 import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
-    const navigate = useNavigate();
     const isHomePage = location.pathname === '/';
 
     useEffect(() => {
@@ -41,15 +40,19 @@ const Navbar = () => {
     return (
         <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3' : 'py-5'}`}>
             <div className="container mx-auto px-4 md:px-8 max-w-7xl">
-                <div className="flex justify-between items-center bg-[#0d1424]/80 backdrop-blur-xl border border-slate-800/80 px-6 md:px-8 py-3.5 rounded-full shadow-2xl shadow-black/50">
+                <div className="flex justify-between items-center bg-[#0d1424]/85 backdrop-blur-xl border border-slate-800/80 px-6 md:px-8 py-3.5 rounded-full shadow-2xl shadow-black/50">
                     {/* Brand Logo */}
                     {isHomePage ? (
-                        <ScrollLink to="hero" smooth={true} className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1">
-                            Tariku<span className="text-emerald-400 group-hover:text-emerald-300 transition-colors">Negesa</span>
+                        <ScrollLink to="hero" smooth={true} className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1.5">
+                            <span className="font-extrabold tracking-tight">Tariku</span>
+                            <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors font-medium">Negesa</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                         </ScrollLink>
                     ) : (
-                        <RouterLink to="/" className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1">
-                            Tariku<span className="text-emerald-400 group-hover:text-emerald-300 transition-colors">Projects</span>
+                        <RouterLink to="/" className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1.5">
+                            <span className="font-extrabold tracking-tight">Tariku</span>
+                            <span className="text-emerald-400 group-hover:text-emerald-300 transition-colors font-medium">Negesa</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                         </RouterLink>
                     )}
 
@@ -82,7 +85,7 @@ const Navbar = () => {
                         ))}
                     </div>
 
-                    {/* Right Hire Me CTA */}
+                    {/* Right Action CTA Pill from Mockup */}
                     <div className="hidden md:flex items-center">
                         {isHomePage ? (
                             <ScrollLink
@@ -90,7 +93,7 @@ const Navbar = () => {
                                 smooth={true}
                                 className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-full shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 flex items-center gap-1.5 cursor-pointer active:scale-95"
                             >
-                                HIRE ME
+                                LET'S TALK
                                 <ArrowUpRight size={14} />
                             </ScrollLink>
                         ) : (
@@ -98,7 +101,7 @@ const Navbar = () => {
                                 to="/#contact"
                                 className="px-5 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-full shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 flex items-center gap-1.5 cursor-pointer active:scale-95"
                             >
-                                HIRE ME
+                                LET'S TALK
                                 <ArrowUpRight size={14} />
                             </RouterLink>
                         )}
@@ -137,8 +140,8 @@ const Navbar = () => {
                             className="fixed top-0 right-0 bottom-0 w-[300px] bg-[#090e1a] border-l border-slate-800 z-[100] md:hidden flex flex-col p-6 shadow-2xl"
                         >
                             <div className="flex justify-between items-center pb-6 border-b border-slate-800">
-                                <span className="text-lg font-bold text-white">
-                                    Tariku<span className="text-emerald-400">Projects</span>
+                                <span className="text-lg font-bold text-white flex items-center gap-1">
+                                    Tariku<span className="text-emerald-400">Negesa</span>
                                 </span>
                                 <button
                                     onClick={() => setIsOpen(false)}
@@ -183,7 +186,7 @@ const Navbar = () => {
                                         onClick={() => setIsOpen(false)}
                                         className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-center rounded-xl block shadow-lg shadow-emerald-500/20"
                                     >
-                                        HIRE ME
+                                        LET'S TALK
                                     </ScrollLink>
                                 ) : (
                                     <RouterLink
@@ -191,7 +194,7 @@ const Navbar = () => {
                                         onClick={() => setIsOpen(false)}
                                         className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-center rounded-xl block shadow-lg shadow-emerald-500/20"
                                     >
-                                        HIRE ME
+                                        LET'S TALK
                                     </RouterLink>
                                 )}
                             </div>

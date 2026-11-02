@@ -1,5 +1,4 @@
 import Hero from './components/Hero';
-import TechStackStrip from './components/TechStackStrip';
 import Projects from './components/Projects';
 import Blog from './components/Blog';
 import Services from './components/Services';
@@ -31,7 +30,6 @@ function Home() {
             <Navbar />
             <main>
                 <Hero />
-                <TechStackStrip />
                 <Projects />
                 <Services />
                 <About />

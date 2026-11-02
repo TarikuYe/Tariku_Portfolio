@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 import { aboutMe } from '../data/portfolio';
 
 const About = () => {
@@ -46,7 +47,19 @@ const About = () => {
                     >
                         {/* Technical Toolkit */}
                         <div>
-                            <h3 className="text-xl md:text-2xl font-bold text-white mb-6">Technical Toolkit</h3>
+                            <div className="flex items-center justify-between mb-6">
+                                <h3 className="text-xl md:text-2xl font-bold text-white">Technical Toolkit</h3>
+                                <a
+                                    href="https://drive.google.com/file/d/1cJlM2MmqCWY2iy0H1vXMhSFJPat8BFNp/view?usp=sharing"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition-colors uppercase tracking-wider"
+                                >
+                                    <span>CV/Resume</span>
+                                    <ArrowUpRight size={14} />
+                                </a>
+                            </div>
+
                             <div className="space-y-6">
                                 <div>
                                     <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">LANGUAGES</h4>
@@ -82,7 +95,7 @@ const About = () => {
                                 </div>
 
                                 <div>
-                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">OTHER</h4>
+                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">OTHER / CLOUD</h4>
                                     <div className="flex flex-wrap gap-2.5">
                                         {aboutMe.toolkit.other.map((item) => (
                                             <span key={item} className="px-3.5 py-1.5 bg-[#121c2e] border border-slate-700/80 rounded-lg text-slate-200 text-xs font-medium">

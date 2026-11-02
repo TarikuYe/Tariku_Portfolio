@@ -141,7 +141,7 @@ const Blog = () => {
     }, []);
 
     const displayList = posts.length > 0 ? posts : initialBlogPosts;
-    const limitedArticles = displayList.slice(0, 3);
+    const limitedArticles = displayList.slice(0, 2);
 
     return (
         <section id="blog" className="py-24 bg-[#060a12] text-white relative">
@@ -164,12 +164,12 @@ const Blog = () => {
                         transition={{ duration: 0.6, delay: 0.1 }}
                         className="text-slate-400 text-base md:text-lg"
                     >
-                        Sharing thoughts and tutorials on software development, AI, and modern web technologies.
+                        Sharing thoughts on AI, software architecture, development, and modern technologies.
                     </motion.p>
                 </div>
 
-                {/* 3 Column Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-14">
+                {/* 2 Column Grid from Mockup */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-14 max-w-5xl mx-auto">
                     {limitedArticles.map((article, index) => {
                         const rawDate = article.display_date || article.published_date || article.date;
                         const formattedDate = formatBlogDate(rawDate) || 'FEB 2026';
@@ -181,11 +181,11 @@ const Blog = () => {
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.6, delay: index * 0.1 }}
                                 onClick={() => setSelectedPost({ ...article, date: formattedDate })}
-                                className="bg-[#0b1322] border border-slate-800 rounded-3xl p-8 group cursor-pointer hover:border-emerald-500/40 transition-all duration-500 flex flex-col justify-between"
+                                className="bg-[#0b1322] border border-slate-800 rounded-3xl p-6 md:p-8 group cursor-pointer hover:border-emerald-500/40 transition-all duration-500 flex flex-col justify-between"
                             >
                                 <div>
                                     {/* Cover Image Banner */}
-                                    <div className="h-48 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-slate-900 border border-slate-800 mb-6 flex items-center justify-center overflow-hidden group-hover:border-emerald-500/30 transition-colors relative">
+                                    <div className="h-52 rounded-2xl bg-[#090e1a] border border-slate-800 mb-6 flex items-center justify-center overflow-hidden group-hover:border-emerald-500/40 transition-colors relative">
                                         {(article.image_url || article.imageUrl) ? (
                                             <>
                                                 <img
@@ -196,7 +196,7 @@ const Blog = () => {
                                                 <img
                                                     src={getDisplayImageUrl(article.image_url || article.imageUrl)}
                                                     alt={article.title}
-                                                    className="relative z-10 w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 p-1"
+                                                    className="relative z-10 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                 />
                                             </>
                                         ) : (
@@ -219,7 +219,7 @@ const Blog = () => {
                                     </h3>
 
                                     {/* Snippet */}
-                                    <p className="text-slate-400 text-sm leading-relaxed line-clamp-3 mb-6">
+                                    <p className="text-slate-400 text-sm leading-relaxed line-clamp-3 mb-6 font-normal">
                                         {article.content ? article.content.substring(0, 140).replace(/[#*`]/g, '') + '...' : ''}
                                     </p>
                                 </div>

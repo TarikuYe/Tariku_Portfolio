@@ -1,91 +1,28 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpRight, X, ExternalLink, Github, Loader2 } from 'lucide-react';
+import { 
+    ArrowUpRight, 
+    ArrowRight, 
+    X, 
+    ExternalLink, 
+    Github, 
+    Loader2, 
+    Smartphone, 
+    Layers, 
+    Cpu, 
+    CheckCircle2, 
+    Sparkles 
+} from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { initialProjects } from '../data/portfolio';
+import ProjectDeviceMockup from './ProjectDeviceMockup';
 
-const DEFAULT_FALLBACK_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='500' viewBox='0 0 800 500'%3E%3Crect width='100%25' height='100%25' fill='%230f172a'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui, sans-serif' font-size='22' font-weight='600' fill='%2310b981'%3EProject Preview%3C/text%3E%3C/svg%3E";
-
-const getDisplayImageUrl = (url) => {
-    if (!url) return '';
-    if (url.startsWith('data:') || url.startsWith('/')) return url;
-    if (url.includes('res.cloudinary.com')) {
-        return `/api/proxy-image?url=${encodeURIComponent(url)}`;
-    }
-    return url;
-};
-
-const handleImageError = (e) => {
-    e.target.onerror = null;
-    e.target.src = DEFAULT_FALLBACK_IMAGE;
-};
-
-const ProjectCard = ({ project, onClick }) => {
-    const displayImage = getDisplayImageUrl(project.image_url);
-    const tags = (project.tech_stack || '').split(',').filter(Boolean);
-
-    return (
-        <motion.div
-            layout
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="group bg-[#0b1322] border border-slate-800/90 rounded-3xl overflow-hidden cursor-pointer flex flex-col h-full hover:border-emerald-500/40 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/5"
-            onClick={() => onClick(project)}
-        >
-            {/* Image Banner */}
-            <div className="relative h-64 md:h-72 overflow-hidden bg-slate-900">
-                {displayImage ? (
-                    <img
-                        src={displayImage}
-                        alt={project.title}
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 opacity-90 group-hover:opacity-100"
-                        onError={handleImageError}
-                    />
-                ) : (
-                    <div className="w-full h-full flex items-center justify-center text-slate-600 italic text-xs">
-                        No Preview Available
-                    </div>
-                )}
-                <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center backdrop-blur-[2px]">
-                    <div className="bg-emerald-500 text-slate-950 p-4 rounded-full shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                        <ArrowUpRight size={24} className="stroke-[3]" />
-                    </div>
-                </div>
-            </div>
-
-            {/* Card Content Body */}
-            <div className="p-8 flex-grow flex flex-col justify-between">
-                <div>
-                    {/* Tech Stack Pills */}
-                    <div className="flex flex-wrap gap-2 mb-4">
-                        {tags.slice(0, 4).map((tech, i) => (
-                            <span key={i} className="text-[10px] uppercase font-bold tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md">
-                                {tech.trim()}
-                            </span>
-                        ))}
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors leading-tight">
-                        {project.title}
-                    </h3>
-
-                    {/* Description */}
-                    <p className="text-slate-400 text-sm leading-relaxed line-clamp-3">
-                        {project.description}
-                    </p>
-                </div>
-            </div>
-        </motion.div>
-    );
-};
-
+// --- Quick Modal for In-Place Inspection ---
 const ProjectModal = ({ project, isOpen, onClose }) => {
+    const navigate = useNavigate();
     if (!isOpen || !project) return null;
-    const displayImage = getDisplayImageUrl(project.image_url);
-    const tags = (project.tech_stack || '').split(',').filter(Boolean);
+
+    const tags = project.techBadges || (project.tech_stack || '').split(',').map(s => s.trim()).filter(Boolean);
 
     return (
         <AnimatePresence>
@@ -93,7 +30,7 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-10 bg-slate-950/90 backdrop-blur-xl"
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8 bg-slate-950/90 backdrop-blur-xl"
                 onClick={onClose}
             >
                 <motion.div
@@ -101,67 +38,81 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
                     animate={{ y: 0, opacity: 1, scale: 1 }}
                     exit={{ y: 50, opacity: 0, scale: 0.95 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="bg-[#0b1322] w-full max-w-5xl rounded-[32px] overflow-hidden shadow-2xl relative max-h-[90vh] overflow-y-auto border border-slate-800"
+                    className="bg-[#0b1322] w-full max-w-5xl rounded-[32px] overflow-hidden shadow-2xl relative max-h-[92vh] overflow-y-auto border border-slate-800"
                 >
                     <button
                         onClick={onClose}
-                        className="absolute top-6 right-6 p-3 bg-slate-800/60 hover:bg-slate-700 text-white rounded-full transition-all z-20"
+                        className="absolute top-5 right-5 p-3 bg-slate-800/80 hover:bg-slate-700 text-white rounded-full transition-all z-20"
+                        aria-label="Close modal"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
 
-                    <div className="grid lg:grid-cols-2 h-full">
-                        <div className="relative h-72 lg:h-full bg-slate-950 overflow-hidden flex items-center justify-center">
-                            {displayImage ? (
-                                <img
-                                    src={displayImage}
-                                    alt={project.title}
-                                    referrerPolicy="no-referrer"
-                                    className="w-full h-full object-cover"
-                                    onError={handleImageError}
-                                />
-                            ) : (
-                                <div className="text-slate-500 font-medium">No Image Provided</div>
-                            )}
+                    <div className="grid lg:grid-cols-12 h-full">
+                        {/* Left: Device Mockup Showcase */}
+                        <div className="lg:col-span-6 p-6 md:p-8 bg-slate-950/80 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-slate-800">
+                            <div className="w-full">
+                                <ProjectDeviceMockup project={project} />
+                            </div>
                         </div>
 
-                        <div className="p-8 md:p-12 flex flex-col justify-between">
+                        {/* Right: Info & Actions */}
+                        <div className="lg:col-span-6 p-6 md:p-10 flex flex-col justify-between">
                             <div>
-                                <div className="flex flex-wrap gap-2 mb-6">
-                                    {tags.map((tech, i) => (
-                                        <span key={i} className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold rounded-lg uppercase tracking-wider">
-                                            {tech.trim()}
+                                <div className="flex flex-wrap gap-2 mb-4">
+                                    {tags.slice(0, 5).map((tech, i) => (
+                                        <span key={i} className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold rounded-md uppercase tracking-wider">
+                                            {tech}
                                         </span>
                                     ))}
                                 </div>
 
-                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-6 leading-tight">{project.title}</h2>
-                                <p className="text-slate-300 text-base leading-relaxed mb-8">{project.description}</p>
+                                <h2 className="text-2xl md:text-3xl font-extrabold text-white mb-4 leading-tight">
+                                    {project.title}
+                                </h2>
+
+                                <p className="text-slate-300 text-sm leading-relaxed mb-6 font-normal">
+                                    {project.overview || project.description}
+                                </p>
+
+                                {project.impactStats && project.impactStats.length > 0 && (
+                                    <div className="grid grid-cols-2 gap-3 mb-6 p-4 rounded-2xl bg-[#080d19] border border-slate-800/80">
+                                        {project.impactStats.slice(0, 2).map((stat, i) => (
+                                            <div key={i}>
+                                                <span className="text-xl font-black text-emerald-400 block">{stat.value}</span>
+                                                <span className="text-[10px] text-slate-400 uppercase font-bold">{stat.label}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="flex flex-wrap gap-4 pt-6 border-t border-slate-800">
-                                {project.github_url && project.github_url !== '#' && (
-                                    <a
-                                        href={project.github_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl flex items-center gap-2 text-sm transition-all"
+                            {/* Modal Action Buttons */}
+                            <div className="space-y-3 pt-4 border-t border-slate-800">
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => {
+                                            onClose();
+                                            navigate(`/projects/${project.slug || project.id}`);
+                                        }}
+                                        className="flex-1 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/20"
                                     >
-                                        <Github size={18} />
-                                        <span>GitHub Repository</span>
-                                    </a>
-                                )}
-                                {project.demo_url && project.demo_url !== '#' && (
-                                    <a
-                                        href={project.demo_url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl flex items-center gap-2 text-sm transition-all"
-                                    >
-                                        <ExternalLink size={18} />
-                                        <span>Live Demo</span>
-                                    </a>
-                                )}
+                                        <span>View Full Project Details</span>
+                                        <ArrowRight size={14} />
+                                    </button>
+
+                                    {project.github_url && project.github_url !== '#' && (
+                                        <a
+                                            href={project.github_url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-4 py-3 bg-[#0d1628] hover:bg-slate-800 border border-slate-700 text-white rounded-xl flex items-center gap-2 text-xs transition-all"
+                                        >
+                                            <Github size={16} />
+                                            <span className="hidden sm:inline">GitHub</span>
+                                        </a>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -171,6 +122,148 @@ const ProjectModal = ({ project, isOpen, onClose }) => {
     );
 };
 
+// --- Standard Project Card (2x2 Grid) ---
+const FeaturedCard = ({ project, onQuickView: _onQuickView }) => {
+    const navigate = useNavigate();
+    const tags = project.techBadges || (project.tech_stack || '').split(',').map(s => s.trim()).filter(Boolean);
+
+    const handleCardClick = () => {
+        navigate(`/projects/${project.slug || project.id}`);
+    };
+
+    return (
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="group bg-[#0b1322] border border-slate-800/80 rounded-[28px] overflow-hidden flex flex-col h-full hover:border-emerald-500/40 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/5"
+        >
+            {/* Top Interactive Device Preview Frame */}
+            <div 
+                className="cursor-pointer p-4 md:p-6 pb-0"
+                onClick={handleCardClick}
+            >
+                <ProjectDeviceMockup project={project} />
+            </div>
+
+            {/* Card Content Body */}
+            <div className="p-6 md:p-8 flex-grow flex flex-col justify-between">
+                <div>
+                    {/* Tech Badges Row */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {tags.slice(0, 5).map((tech, i) => (
+                            <span 
+                                key={i} 
+                                className="text-[10px] uppercase font-bold tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md"
+                            >
+                                {tech}
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* Title */}
+                    <h3 
+                        onClick={handleCardClick}
+                        className="text-xl md:text-2xl font-bold text-white mb-3 group-hover:text-emerald-400 transition-colors leading-snug cursor-pointer"
+                    >
+                        {project.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="text-slate-400 text-sm leading-relaxed line-clamp-3 mb-6 font-normal">
+                        {project.description}
+                    </p>
+                </div>
+
+                {/* Card Footer Bar */}
+                <div className="flex items-center justify-between pt-4 border-t border-slate-800/80 text-xs">
+                    <span className="text-[11px] font-mono tracking-wider text-slate-500 uppercase font-semibold">
+                        {project.metaFooter || `${project.timeline || '2024'} / ${project.category || 'FULL STACK'}`}
+                    </span>
+
+                    <button
+                        onClick={handleCardClick}
+                        className="inline-flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 font-bold uppercase tracking-wider text-xs transition-colors group/link"
+                    >
+                        <span>{project.ctaText || 'CASE STUDY'}</span>
+                        <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
+                    </button>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
+// --- Horizontal Full-Width Banner Card (Card 5) ---
+const HorizontalBannerCard = ({ project, onQuickView: _onQuickView }) => {
+    const navigate = useNavigate();
+    const tags = project.techBadges || (project.tech_stack || '').split(',').map(s => s.trim()).filter(Boolean);
+
+    const handleCardClick = () => {
+        navigate(`/projects/${project.slug || project.id}`);
+    };
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="group bg-[#0b1322] border border-slate-800/90 rounded-[28px] p-6 md:p-8 hover:border-emerald-500/50 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/5"
+        >
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                {/* Left Device Icon Container */}
+                <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0 group-hover:scale-105 group-hover:bg-emerald-500/20 transition-all">
+                        <Smartphone size={28} className="stroke-[2.2]" />
+                    </div>
+
+                    <div className="space-y-2">
+                        {/* Tags */}
+                        <div className="flex flex-wrap gap-2">
+                            {tags.map((tag, i) => (
+                                <span 
+                                    key={i} 
+                                    className="text-[10px] uppercase font-bold tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-md"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+
+                        {/* Title */}
+                        <h3 
+                            onClick={handleCardClick}
+                            className="text-xl md:text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors cursor-pointer"
+                        >
+                            {project.title}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-slate-400 text-sm max-w-3xl leading-relaxed">
+                            {project.description}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Right Action Button */}
+                <div className="shrink-0 flex items-center gap-3">
+                    <button
+                        onClick={handleCardClick}
+                        className="px-6 py-3 bg-[#0d1628] hover:bg-emerald-500 text-slate-200 hover:text-slate-950 border border-slate-700 hover:border-emerald-400 font-bold text-xs uppercase tracking-wider rounded-xl flex items-center gap-2 transition-all shadow-lg active:scale-95 group/btn"
+                    >
+                        <span>View Project Details</span>
+                        <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                    </button>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
+
+// --- Master Projects Component ---
 const Projects = () => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -182,59 +275,119 @@ const Projects = () => {
                 const response = await fetch('/api/projects');
                 if (response.ok) {
                     const data = await response.json();
-                    setProjects(data);
+                    if (Array.isArray(data) && data.length > 0) {
+                        // Merge with initial rich properties
+                        const merged = data.map(dbItem => {
+                            const initial = initialProjects.find(p => p.id === dbItem.id) || {};
+                            return { ...initial, ...dbItem };
+                        });
+                        setProjects(merged);
+                        return;
+                    }
                 }
             } catch (err) {
                 console.error('Database fetch projects error:', err);
             } finally {
                 setLoading(false);
             }
+            // Fallback to high-fidelity initialProjects
+            setProjects(initialProjects);
         };
+
         fetchProjects();
     }, []);
 
+    // Split projects into the 2x2 grid (first 4) and the horizontal banner (5th) + extras
+    const gridProjects = projects.filter(p => !p.layout || p.layout !== 'banner').slice(0, 4);
+    const bannerProject = projects.find(p => p.layout === 'banner') || projects[4];
+    const extraProjects = projects.slice(5);
+
     return (
-        <section id="work" className="py-24 bg-[#060a12] text-white relative">
-            <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-7xl">
-                {/* Section Header */}
+        <section id="work" className="py-24 bg-[#060a12] text-white relative overflow-hidden">
+            {/* Background lighting accents */}
+            <div className="absolute top-1/3 left-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-[140px] pointer-events-none" />
+            <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-[140px] pointer-events-none" />
+
+            <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-7xl relative z-10">
+                {/* Section Header matching provided UI */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-                    <div>
-                        <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-4">
+                    <div className="max-w-2xl">
+                        <motion.h2 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-4"
+                        >
                             Featured <span className="text-emerald-400">Projects.</span>
-                        </h2>
-                        <p className="text-slate-400 text-base md:text-lg max-w-xl">
-                            Showcasing my best work dynamically fetched from the database. Everything you see here is updated in real-time.
-                        </p>
+                        </motion.h2>
+                        <motion.p 
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.1 }}
+                            className="text-slate-400 text-sm md:text-base leading-relaxed"
+                        >
+                            Showcasing my proudest work spanning intelligent full-stack systems, computer vision, and machine learning. Everything here is built for scale, performance & UX.
+                        </motion.p>
                     </div>
 
-                    <div className="w-12 h-12 rounded-full bg-emerald-500 flex items-center justify-center text-slate-950 shadow-lg shadow-emerald-500/20">
-                        <ArrowUpRight size={24} className="stroke-[3]" />
-                    </div>
+                    {/* Right Circular Action Indicator from Mockup */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="hidden md:flex items-center gap-3"
+                    >
+                        <div className="w-12 h-12 rounded-full bg-[#0d1628] border border-slate-700/80 flex items-center justify-center text-emerald-400 shadow-lg shadow-black/40 group hover:border-emerald-500 transition-colors">
+                            <ArrowUpRight size={22} className="stroke-[2.5]" />
+                        </div>
+                    </motion.div>
                 </div>
 
                 {/* Loading State */}
-                {loading ? (
-                    <div className="flex justify-center items-center py-20">
+                {loading && projects.length === 0 ? (
+                    <div className="flex justify-center items-center py-24">
                         <Loader2 className="animate-spin text-emerald-400" size={40} />
                     </div>
-                ) : projects.length === 0 ? (
-                    <div className="text-center py-16 bg-[#0b1322] border border-slate-800 rounded-3xl text-slate-400">
-                        No projects found in database.
-                    </div>
                 ) : (
-                    /* Dynamic Database Projects Grid */
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-                        {projects.map((project) => (
-                            <ProjectCard
-                                key={project.id}
-                                project={project}
-                                onClick={(p) => setSelectedProject(p)}
+                    <div className="space-y-8">
+                        {/* 2x2 Grid of Primary Featured Projects */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+                            {gridProjects.map((project) => (
+                                <FeaturedCard
+                                    key={project.id}
+                                    project={project}
+                                    onQuickView={(p) => setSelectedProject(p)}
+                                />
+                            ))}
+                        </div>
+
+                        {/* 5th Item: Horizontal Full-Width Banner Card */}
+                        {bannerProject && (
+                            <HorizontalBannerCard
+                                project={bannerProject}
+                                onQuickView={(p) => setSelectedProject(p)}
                             />
-                        ))}
+                        )}
+
+                        {/* Additional projects if any */}
+                        {extraProjects.length > 0 && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 pt-4">
+                                {extraProjects.map((project) => (
+                                    <FeaturedCard
+                                        key={project.id}
+                                        project={project}
+                                        onQuickView={(p) => setSelectedProject(p)}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
 
+            {/* Quick Preview Modal */}
             <ProjectModal
                 project={selectedProject}
                 isOpen={!!selectedProject}

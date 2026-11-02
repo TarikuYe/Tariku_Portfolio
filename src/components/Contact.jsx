@@ -58,18 +58,18 @@ const Contact = () => {
                         transition={{ duration: 0.6, delay: 0.1 }}
                         className="text-slate-400 text-base md:text-lg"
                     >
-                        Ready to elevate your digital presence? Send a message.
+                        Have a project in mind or looking for an AI/Full-Stack engineer? Drop me a message.
                     </motion.p>
                 </div>
 
                 {/* 2 Column Contact Layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start max-w-6xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-stretch max-w-6xl mx-auto">
                     {/* Left Column: Form */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="lg:col-span-7 bg-[#0b1322] border border-slate-800 rounded-3xl p-8 md:p-10"
+                        className="lg:col-span-7 bg-[#0b1322] border border-slate-800 rounded-3xl p-8 md:p-10 flex flex-col justify-between"
                     >
                         <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -102,7 +102,7 @@ const Contact = () => {
                                     required
                                     rows="5"
                                     className="w-full bg-[#121c2e] border border-slate-700/80 rounded-xl px-5 py-3.5 text-white focus:outline-none focus:border-emerald-400 transition-colors text-sm resize-none"
-                                    placeholder="Tell me about your project..."
+                                    placeholder="Tell me about your project, goals, and timeline..."
                                 ></textarea>
                             </div>
 
@@ -128,68 +128,71 @@ const Contact = () => {
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
-                        className="lg:col-span-5 bg-[#0b1322] border border-slate-800 rounded-3xl p-8 md:p-10 flex flex-col justify-between h-full space-y-10"
+                        className="lg:col-span-5 bg-[#0b1322] border border-slate-800 rounded-3xl p-8 md:p-10 flex flex-col justify-between space-y-8"
                     >
-                        <div className="space-y-8">
-                            <span className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest rounded-lg">
-                                [Contact Info]
+                        <div className="space-y-6">
+                            <span className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-widest rounded-full">
+                                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                                <span>AVAILABLE 2026</span>
                             </span>
 
                             <div>
+                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">EMAIL</span>
                                 <a
                                     href="mailto:tarikunegesa19@gmail.com"
-                                    className="text-xl md:text-2xl font-bold text-white hover:text-emerald-400 transition-colors block break-words"
+                                    className="text-lg md:text-xl font-bold text-white hover:text-emerald-400 transition-colors block break-words"
                                 >
                                     tarikunegesa19@gmail.com
                                 </a>
                             </div>
 
                             <div>
+                                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest block mb-1">PHONE / DIRECT</span>
                                 <a
                                     href="tel:+251919421910"
-                                    className="text-xl md:text-2xl font-bold text-white hover:text-emerald-400 transition-colors block"
+                                    className="text-lg md:text-xl font-bold text-white hover:text-emerald-400 transition-colors block"
                                 >
                                     +251919421910
                                 </a>
-                                <p className="text-slate-400 text-sm mt-1">Addis Ababa, Ethiopia</p>
+                                <p className="text-slate-400 text-xs mt-1">Wolkite / Addis Ababa, Ethiopia</p>
                             </div>
                         </div>
 
                         <div>
                             <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">FOLLOW ME</h4>
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-2.5">
                                 <a
                                     href="https://github.com/TarikuYe"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-2 group"
+                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5 group"
                                     title="GitHub"
                                 >
-                                    <Github size={16} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
+                                    <Github size={15} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
                                     <span>GitHub</span>
-                                    <ArrowUpRight size={14} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                                    <ArrowUpRight size={13} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
                                 </a>
                                 <a
                                     href="https://www.linkedin.com/in/tarikunegesa"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-2 group"
+                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5 group"
                                     title="LinkedIn"
                                 >
-                                    <Linkedin size={16} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
+                                    <Linkedin size={15} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
                                     <span>LinkedIn</span>
-                                    <ArrowUpRight size={14} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                                    <ArrowUpRight size={13} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
                                 </a>
                                 <a
                                     href="https://www.instagram.com/tariku_et?igsi=MWYzajZkdTJxOWsyYQ=="
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-2 group"
+                                    className="px-4 py-2.5 bg-[#121c2e] border border-slate-700/80 rounded-xl text-slate-200 hover:text-emerald-400 hover:border-emerald-400 text-xs font-bold transition-all flex items-center gap-1.5 group"
                                     title="Instagram"
                                 >
-                                    <Instagram size={16} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
+                                    <Instagram size={15} className="text-slate-400 group-hover:text-emerald-400 transition-colors" />
                                     <span>Instagram</span>
-                                    <ArrowUpRight size={14} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                                    <ArrowUpRight size={13} className="text-slate-500 group-hover:text-emerald-400 transition-colors" />
                                 </a>
                             </div>
                         </div>

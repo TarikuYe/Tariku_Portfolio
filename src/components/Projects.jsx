@@ -4,17 +4,12 @@ import {
     ArrowUpRight, 
     ArrowRight, 
     X, 
-    ExternalLink, 
     Github, 
     Loader2, 
-    Smartphone, 
-    Layers, 
-    Cpu, 
-    CheckCircle2, 
-    Sparkles 
+    Smartphone 
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { initialProjects } from '../data/portfolio';
+import { useNavigate } from 'react-router-dom';
+import { initialProjects, matchProjectDetails } from '../data/portfolio';
 import ProjectDeviceMockup from './ProjectDeviceMockup';
 
 // --- Quick Modal for In-Place Inspection ---
@@ -140,7 +135,7 @@ const FeaturedCard = ({ project, onQuickView: _onQuickView }) => {
             transition={{ duration: 0.6 }}
             className="group bg-[#0b1322] border border-slate-800/80 rounded-[28px] overflow-hidden flex flex-col h-full hover:border-emerald-500/40 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/5"
         >
-            {/* Top Interactive Device Preview Frame */}
+            {/* Top Image Preview Container */}
             <div 
                 className="cursor-pointer p-4 md:p-6 pb-0"
                 onClick={handleCardClick}
@@ -196,13 +191,13 @@ const FeaturedCard = ({ project, onQuickView: _onQuickView }) => {
     );
 };
 
-// --- Horizontal Full-Width Banner Card (Card 5) ---
+// --- Horizontal Full-Width Banner Card (Kids Learning App) ---
 const HorizontalBannerCard = ({ project, onQuickView: _onQuickView }) => {
     const navigate = useNavigate();
     const tags = project.techBadges || (project.tech_stack || '').split(',').map(s => s.trim()).filter(Boolean);
 
     const handleCardClick = () => {
-        navigate(`/projects/${project.slug || project.id}`);
+        navigate(`/projects/${project.slug || project.id || 'kids-learning-android-app'}`);
     };
 
     return (
@@ -276,10 +271,21 @@ const Projects = () => {
                 if (response.ok) {
                     const data = await response.json();
                     if (Array.isArray(data) && data.length > 0) {
-                        // Merge with initial rich properties
+                        // Merge with initial rich properties using semantic matcher
                         const merged = data.map(dbItem => {
-                            const initial = initialProjects.find(p => p.id === dbItem.id) || {};
-                            return { ...initial, ...dbItem };
+                            const template = matchProjectDetails(dbItem) || {};
+                            const rawImg = dbItem.image_url;
+                            const isUnsplash = rawImg && rawImg.includes('unsplash.com');
+                            const isTallUpload = rawImg && (rawImg.includes('1770844') || rawImg.includes('1771012'));
+                            const finalImg = (!rawImg || isUnsplash || isTallUpload) ? (template.image_url || rawImg) : rawImg;
+
+                            return { 
+                                ...template, 
+                                ...dbItem,
+                                slug: template.slug || dbItem.slug || `project-${dbItem.id}`,
+                                layout: template.layout || (dbItem.title && (dbItem.title.toLowerCase().includes('kid') || dbItem.title.toLowerCase().includes('learn')) ? 'banner' : undefined),
+                                image_url: finalImg
+                            };
                         });
                         setProjects(merged);
                         return;
@@ -297,10 +303,21 @@ const Projects = () => {
         fetchProjects();
     }, []);
 
-    // Split projects into the 2x2 grid (first 4) and the horizontal banner (5th) + extras
-    const gridProjects = projects.filter(p => !p.layout || p.layout !== 'banner').slice(0, 4);
-    const bannerProject = projects.find(p => p.layout === 'banner') || projects[4];
-    const extraProjects = projects.slice(5);
+    // Explicitly identify the Kids Learning App for the horizontal banner card
+    const bannerProject = projects.find(p => 
+        p.layout === 'banner' || 
+        (p.title && (p.title.toLowerCase().includes('kid') || p.title.toLowerCase().includes('learn'))) ||
+        (p.slug && p.slug.includes('kid'))
+    ) || projects.find(p => p.id === 4) || projects[3];
+
+    // Grid contains all other projects (up to 4)
+    const gridProjects = projects
+        .filter(p => p.id !== bannerProject?.id && p.slug !== bannerProject?.slug)
+        .slice(0, 4);
+
+    const extraProjects = projects
+        .filter(p => p.id !== bannerProject?.id && p.slug !== bannerProject?.slug)
+        .slice(4);
 
     return (
         <section id="work" className="py-24 bg-[#060a12] text-white relative overflow-hidden">
@@ -309,7 +326,7 @@ const Projects = () => {
             <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-[140px] pointer-events-none" />
 
             <div className="container mx-auto px-6 md:px-12 lg:px-20 max-w-7xl relative z-10">
-                {/* Section Header matching provided UI */}
+                {/* Section Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
                     <div className="max-w-2xl">
                         <motion.h2 
@@ -332,7 +349,6 @@ const Projects = () => {
                         </motion.p>
                     </div>
 
-                    {/* Right Circular Action Indicator from Mockup */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.8 }}
                         whileInView={{ opacity: 1, scale: 1 }}
@@ -356,14 +372,14 @@ const Projects = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
                             {gridProjects.map((project) => (
                                 <FeaturedCard
-                                    key={project.id}
+                                    key={project.id || project.slug}
                                     project={project}
                                     onQuickView={(p) => setSelectedProject(p)}
                                 />
                             ))}
                         </div>
 
-                        {/* 5th Item: Horizontal Full-Width Banner Card */}
+                        {/* Horizontal Full-Width Banner Card (Kids Learning App) */}
                         {bannerProject && (
                             <HorizontalBannerCard
                                 project={bannerProject}
@@ -376,7 +392,7 @@ const Projects = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10 pt-4">
                                 {extraProjects.map((project) => (
                                     <FeaturedCard
-                                        key={project.id}
+                                        key={project.id || project.slug}
                                         project={project}
                                         onQuickView={(p) => setSelectedProject(p)}
                                     />

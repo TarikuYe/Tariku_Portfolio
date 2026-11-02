@@ -1,86 +1,6 @@
 export const initialProjects = [
     {
         id: 1,
-        slug: "weekly-report-automation",
-        title: "Weekly Report Automation",
-        subtitle: "Enterprise reporting dashboard with automated sentiment analysis & multi-source document ingestion.",
-        category: "AI PIPELINE",
-        liveBadge: "CASE STUDY",
-        metaFooter: "2024 / FULL STACK / AI PIPELINE",
-        ctaText: "CASE STUDY",
-        deviceType: "laptop",
-        timeline: "4 Months / 2024",
-        role: "Lead Full-Stack & ML Engineer",
-        client: "Enterprise Operations",
-        status: "Production Deployed",
-        price: 0,
-        tech_stack: "PYTHON, NLP, FASTAPI, PYTORCH, CI/CD",
-        techBadges: ["PYTHON", "NLP", "FASTAPI", "PYTORCH", "CI/CD"],
-        description: "Enterprise reporting dashboard with automated sentiment analysis, automated data extraction, generating actionable insights from hundreds of spreadsheets and documents. Custom-trained summarization pipeline.",
-        overview: "A mission-critical enterprise intelligence system engineered to eliminate manual report synthesis. The platform automatically ingests, normalizes, and extracts actionable insights from hundreds of distributed spreadsheets, client feedback logs, and operational reports each week. Leveraging custom fine-tuned transformer models, it produces executive summaries with quantified sentiment metrics and anomaly detection in seconds.",
-        impactStats: [
-            { value: "99.4%", label: "Extraction Accuracy" },
-            { value: "12x", label: "Faster Report Turnaround" },
-            { value: "450+", label: "Weekly Docs Processed" },
-            { value: "< 1.5s", label: "Pipeline Latency" }
-        ],
-        challenges: [
-            "Heterogeneous data formats across disparate departments (Excel, PDF, CSV, unstructured emails).",
-            "Latency bottlenecks when running multi-stage NLP models over hundreds of weekly documents.",
-            "Requirement for strict enterprise data privacy and deterministic summary audits."
-        ],
-        solutions: [
-            "Built an asynchronous ingestion worker pool using FastAPI and Celery with Redis queue buffering.",
-            "Distilled and quantized a domain-specific PyTorch NLP transformer to achieve sub-second document scoring.",
-            "Created an interactive React dashboard with drill-down audit trails for every extracted metric."
-        ],
-        architecture: "Distributed microservices architecture utilizing FastAPI for inference endpoints, PostgreSQL with pgvector for semantic caching, and a containerized Docker pipeline orchestrated with automated CI/CD validation.",
-        keyFeatures: [
-            {
-                title: "Automated Document Ingestion",
-                description: "Seamless parsing and schema normalization across PDF, XLSX, and CSV with schema drift detection."
-            },
-            {
-                title: "Custom NLP Summarization",
-                description: "Fine-tuned transformer pipeline that condenses 40-page operational logs into executive action points."
-            },
-            {
-                title: "Multi-Dimensional Sentiment Analysis",
-                description: "Categorizes stakeholder feedback into sentiment scores, urgency levels, and departmental tags."
-            },
-            {
-                title: "Executive Export Suite",
-                description: "One-click generation of branded PDF and PowerPoint executive decks with live vector charts."
-            }
-        ],
-        techDetails: {
-            frontend: ["React.js", "Tailwind CSS", "Framer Motion", "Recharts"],
-            backend: ["FastAPI", "Python 3.11", "Celery", "Redis"],
-            ai_ml: ["PyTorch", "Hugging Face Transformers", "NLTK", "SpaCy"],
-            database: ["PostgreSQL", "SQLAlchemy"],
-            devops: ["Docker", "GitHub Actions", "Nginx", "Linux Server"]
-        },
-        codeSnippet: `async def generate_weekly_summary(batch_id: str, db: Session):
-    # 1. Fetch raw documents from async queue
-    documents = await document_loader.fetch_batch(batch_id)
-    
-    # 2. Tokenize and execute distilled summarization model
-    embeddings = embedding_engine.encode([doc.content for doc in documents])
-    sentiment_scores = sentiment_classifier.predict(embeddings)
-    
-    # 3. Assemble executive report with anomaly flags
-    summary = summarizer.generate_action_points(embeddings, max_tokens=500)
-    return ReportResponse(
-        summary=summary, 
-        sentiment_index=sentiment_scores.mean(),
-        processed_count=len(documents)
-    )`,
-        source_url: "https://github.com/TarikuYe",
-        github_url: "https://github.com/TarikuYe",
-        demo_url: "#"
-    },
-    {
-        id: 2,
         slug: "qr-studio-generator-platform",
         title: "QR Studio — Custom QR Code Generator & Design Platform",
         subtitle: "A modern, full-stack QR Code Generator and customization platform with vector rendering & analytics.",
@@ -94,6 +14,7 @@ export const initialProjects = [
         client: "Product Launch / Open Source",
         status: "Production Deployed",
         price: 0,
+        image_url: "/projects/qr-studio.jpg",
         tech_stack: "REACT, NODE.JS, POSTGRES, CANVAS API",
         techBadges: ["REACT", "NODE.JS", "POSTGRES", "CANVAS API"],
         description: "A modern, full-stack QR Code Generator and customization platform that enables users to create high-resolution custom vector QR codes (SVG, PNG, EPS) with custom branding, analytics, and dynamic redirect capabilities.",
@@ -145,7 +66,6 @@ export const initialProjects = [
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     
-    // Draw custom smooth corner nodes
     applyGradientShading(ctx, colorScheme);
     drawCustomEyeModules(ctx, qrMatrix.getEyes());
     
@@ -159,10 +79,10 @@ export const initialProjects = [
         demo_url: "#"
     },
     {
-        id: 3,
+        id: 2,
         slug: "tourism-management-sentiment-analysis",
-        title: "Web & Android Tourism Management with Sentiment Analysis",
-        subtitle: "Integrated tourism ecosystem with AI-powered review sentiment analysis for Wolkite Town.",
+        title: "Web & Android Tourism Management System with Sentiment Analysis for Wolaita Zone",
+        subtitle: "Integrated tourism ecosystem with AI-powered review sentiment analysis for Wolaita Zone.",
         category: "FULL STACK / AI",
         liveBadge: "17+ / WEB + ANDROID",
         metaFooter: "2024 / FULL STACK",
@@ -170,13 +90,14 @@ export const initialProjects = [
         deviceType: "desktop",
         timeline: "5 Months / 2024",
         role: "Full-Stack System Architect & ML Lead",
-        client: "Wolkite Municipality Tourism Bureau",
+        client: "Tourism & Culture Bureau",
         status: "Completed & Evaluated",
         price: 0,
+        image_url: "/projects/tourism-management.jpg",
         tech_stack: "REACT, FASTAPI (NLP), POSTGRESQL, FIREBASE / ANDROID",
         techBadges: ["REACT", "FASTAPI (NLP)", "POSTGRESQL", "FIREBASE / ANDROID"],
-        description: "A full-stack tourism management and review analytics platform developed for Wolkite Town. Features tourist destination booking, feedback sentiment classification with fine-tuned multilingual BERT model, and automated hotel/service rating.",
-        overview: "Developed as an end-to-end regional digital transformation initiative for Wolkite Town, Ethiopia. The system bridges local tourism administration, hospitality businesses, and international/domestic travelers. It features an interactive administrative web portal for regional authorities, coupled with an AI-driven feedback engine that classifies tourist reviews into actionable satisfaction indices.",
+        description: "A full-stack tourism management and review analytics platform developed for Wolaita Zone. Features tourist destination booking, feedback sentiment classification with fine-tuned multilingual BERT model, and automated hotel/service rating.",
+        overview: "Developed as an end-to-end regional digital transformation initiative for Wolaita Zone, Ethiopia. The system bridges local tourism administration, hospitality businesses, and international/domestic travelers. It features an interactive administrative web portal for regional authorities, coupled with an AI-driven feedback engine that classifies tourist reviews into actionable satisfaction indices.",
         impactStats: [
             { value: "17+", label: "Destinations & Hotspots" },
             { value: "91.8%", label: "NLP Classification F1-Score" },
@@ -228,16 +149,15 @@ async def analyze_tourist_feedback(review: ReviewSubmission):
         logits = sentiment_model(**tokens).logits
         probabilities = torch.softmax(logits, dim=1).squeeze()
     
-    score = float(probabilities[1] - probabilities[0]) # Positive - Negative
+    score = float(probabilities[1] - probabilities[0])
     label = "POSITIVE" if score > 0.2 else ("NEGATIVE" if score < -0.2 else "NEUTRAL")
-    
     return SentimentResult(label=label, confidence=float(probabilities.max()), polarity=score)`,
         source_url: "https://github.com/TarikuYe",
         github_url: "https://github.com/TarikuYe",
         demo_url: "#"
     },
     {
-        id: 4,
+        id: 3,
         slug: "digital-menu-restaurant-management",
         title: "Digital Menu System for Hotel & Restaurant",
         subtitle: "Contactless digital dining platform with real-time kitchen order display & inventory management.",
@@ -251,6 +171,7 @@ async def analyze_tourist_feedback(review: ReviewSubmission):
         client: "Hospitality & Restaurant Group",
         status: "Production Ready",
         price: 0,
+        image_url: "/projects/digital-menu.jpg",
         tech_stack: "REACT, TAILWIND CSS, POSTGRESQL, SOCKET.IO",
         techBadges: ["REACT", "TAILWIND CSS", "POSTGRESQL", "SOCKET.IO"],
         description: "Interactive food and hospitality order management system replacing traditional paper menus with contactless QR ordering, real-time kitchen display sync, live order status tracking, multilingual multi-currency support, and point-of-sale integration.",
@@ -297,19 +218,15 @@ async def analyze_tourist_feedback(review: ReviewSubmission):
             database: ["PostgreSQL", "Prisma ORM"],
             devops: ["Render", "Vercel", "Docker"]
         },
-        codeSnippet: `// Kitchen Display System WebSocket Order Dispatch
-io.on('connection', (socket) => {
+        codeSnippet: `io.on('connection', (socket) => {
     socket.on('submit_guest_order', async (orderData) => {
         const validatedOrder = await orderService.createOrder(orderData);
-        
-        // Broadcast instant notification to kitchen stations
         io.to(\`station_\${validatedOrder.category}\`).emit('new_kitchen_ticket', {
             orderId: validatedOrder.id,
             table: validatedOrder.tableNumber,
             items: validatedOrder.items,
             timestamp: new Date().toISOString()
         });
-        
         socket.emit('order_confirmed', { status: 'PREPARING', etaMinutes: 15 });
     });
 });`,
@@ -318,9 +235,9 @@ io.on('connection', (socket) => {
         demo_url: "#"
     },
     {
-        id: 5,
-        slug: "kidssoming-android-app",
-        title: "Kidssoming Android App for KG Students",
+        id: 4,
+        slug: "kids-learning-android-app",
+        title: "Kids Learning Android App (KG Students)",
         subtitle: "Interactive phonics & early childhood educational application built with Kotlin and Firebase.",
         category: "MOBILE APP",
         liveBadge: "MOBILE APP",
@@ -333,10 +250,11 @@ io.on('connection', (socket) => {
         client: "Early Childhood Education Initiative",
         status: "Production Ready",
         price: 0,
+        image_url: "/projects/kidssoming-app.jpg",
         tech_stack: "APPS, KOTLIN, FIREBASE, ROOM DB",
         techBadges: ["APPS", "KOTLIN", "FIREBASE", "ROOM DB"],
-        description: "Interactive educational Android learning application designed for Kindergarten students featuring audio-visual phonics, interactive quizzes, offline learning progress, and child-safe interface.",
-        overview: "A delightful, child-centric Android educational application designed specifically for Kindergarten and early primary learners. Built in native Kotlin with Android Jetpack components, Kidssoming transforms foundational alphabet literacy, phonetic pronunciation, numbers, and basic cognitive puzzles into an engaging, gamified journey. The app works 100% offline with local Room DB storage while syncing achievements to Firebase when connectivity is available.",
+        description: "A fun and interactive Android learning application designed for Kindergarten (KG) students to support early childhood education through interactive digital lessons, phonics audio, and gamified progress.",
+        overview: "A delightful, child-centric Android educational application designed specifically for Kindergarten and early primary learners. Built in native Kotlin with Android Jetpack components, this application transforms foundational alphabet literacy, phonetic pronunciation, numbers, and basic cognitive puzzles into an engaging, gamified journey. The app works 100% offline with local Room DB storage while syncing achievements to Firebase when connectivity is available.",
         impactStats: [
             { value: "50+", label: "Interactive Lessons" },
             { value: "100%", label: "Offline Operational" },
@@ -400,8 +318,114 @@ io.on('connection', (socket) => {
         source_url: "https://github.com/TarikuYe",
         github_url: "https://github.com/TarikuYe",
         demo_url: "#"
+    },
+    {
+        id: 5,
+        slug: "weekly-report-automation",
+        title: "Weekly Report Automation",
+        subtitle: "Enterprise reporting dashboard with automated sentiment analysis & multi-source document ingestion.",
+        category: "AI PIPELINE",
+        liveBadge: "CASE STUDY",
+        metaFooter: "2024 / FULL STACK / AI PIPELINE",
+        ctaText: "CASE STUDY",
+        deviceType: "laptop",
+        timeline: "4 Months / 2024",
+        role: "Lead Full-Stack & ML Engineer",
+        client: "Enterprise Operations",
+        status: "Production Deployed",
+        price: 0,
+        image_url: "/projects/weekly-report.jpg",
+        tech_stack: "PYTHON, NLP, FASTAPI, PYTORCH, CI/CD",
+        techBadges: ["PYTHON", "NLP", "FASTAPI", "PYTORCH", "CI/CD"],
+        description: "Enterprise reporting dashboard with automated sentiment analysis, automated data extraction, generating actionable insights from hundreds of spreadsheets and documents. Custom-trained summarization pipeline.",
+        overview: "A mission-critical enterprise intelligence system engineered to eliminate manual report synthesis. The platform automatically ingests, normalizes, and extracts actionable insights from hundreds of distributed spreadsheets, client feedback logs, and operational reports each week. Leveraging custom fine-tuned transformer models, it produces executive summaries with quantified sentiment metrics and anomaly detection in seconds.",
+        impactStats: [
+            { value: "99.4%", label: "Extraction Accuracy" },
+            { value: "12x", label: "Faster Report Turnaround" },
+            { value: "450+", label: "Weekly Docs Processed" },
+            { value: "< 1.5s", label: "Pipeline Latency" }
+        ],
+        challenges: [
+            "Heterogeneous data formats across disparate departments (Excel, PDF, CSV, unstructured emails).",
+            "Latency bottlenecks when running multi-stage NLP models over hundreds of weekly documents.",
+            "Requirement for strict enterprise data privacy and deterministic summary audits."
+        ],
+        solutions: [
+            "Built an asynchronous ingestion worker pool using FastAPI and Celery with Redis queue buffering.",
+            "Distilled and quantized a domain-specific PyTorch NLP transformer to achieve sub-second document scoring.",
+            "Created an interactive React dashboard with drill-down audit trails for every extracted metric."
+        ],
+        architecture: "Distributed microservices architecture utilizing FastAPI for inference endpoints, PostgreSQL with pgvector for semantic caching, and a containerized Docker pipeline orchestrated with automated CI/CD validation.",
+        keyFeatures: [
+            {
+                title: "Automated Document Ingestion",
+                description: "Seamless parsing and schema normalization across PDF, XLSX, and CSV with schema drift detection."
+            },
+            {
+                title: "Custom NLP Summarization",
+                description: "Fine-tuned transformer pipeline that condenses 40-page operational logs into executive action points."
+            },
+            {
+                title: "Multi-Dimensional Sentiment Analysis",
+                description: "Categorizes stakeholder feedback into sentiment scores, urgency levels, and departmental tags."
+            },
+            {
+                title: "Executive Export Suite",
+                description: "One-click generation of branded PDF and PowerPoint executive decks with live vector charts."
+            }
+        ],
+        techDetails: {
+            frontend: ["React.js", "Tailwind CSS", "Framer Motion", "Recharts"],
+            backend: ["FastAPI", "Python 3.11", "Celery", "Redis"],
+            ai_ml: ["PyTorch", "Hugging Face Transformers", "NLTK", "SpaCy"],
+            database: ["PostgreSQL", "SQLAlchemy"],
+            devops: ["Docker", "GitHub Actions", "Nginx", "Linux Server"]
+        },
+        codeSnippet: `async def generate_weekly_summary(batch_id: str, db: Session):
+    documents = await document_loader.fetch_batch(batch_id)
+    embeddings = embedding_engine.encode([doc.content for doc in documents])
+    sentiment_scores = sentiment_classifier.predict(embeddings)
+    summary = summarizer.generate_action_points(embeddings, max_tokens=500)
+    return ReportResponse(
+        summary=summary, 
+        sentiment_index=sentiment_scores.mean(),
+        processed_count=len(documents)
+    )`,
+        source_url: "https://github.com/TarikuYe",
+        github_url: "https://github.com/TarikuYe",
+        demo_url: "#"
     }
 ];
+
+// Helper to reliably match database items to rich portfolio templates
+export const matchProjectDetails = (dbItem) => {
+    if (!dbItem) return null;
+    const title = (dbItem.title || '').toLowerCase();
+    const id = Number(dbItem.id);
+
+    // 1. Semantic match by title keywords first
+    if (title.includes('kid') || title.includes('learn') || title.includes('kg') || title.includes('student')) {
+        return initialProjects.find(p => p.slug === 'kids-learning-android-app') || initialProjects[3];
+    }
+    if (title.includes('qr')) {
+        return initialProjects.find(p => p.slug === 'qr-studio-generator-platform') || initialProjects[0];
+    }
+    if (title.includes('tour') || title.includes('sentiment') || title.includes('wolaita') || title.includes('wolkite')) {
+        return initialProjects.find(p => p.slug === 'tourism-management-sentiment-analysis') || initialProjects[1];
+    }
+    if (title.includes('menu') || title.includes('restaurant') || title.includes('hotel') || title.includes('dining')) {
+        return initialProjects.find(p => p.slug === 'digital-menu-restaurant-management') || initialProjects[2];
+    }
+    if (title.includes('report') || title.includes('automation') || title.includes('weekly')) {
+        return initialProjects.find(p => p.slug === 'weekly-report-automation') || initialProjects[4];
+    }
+
+    // 2. Match by ID if available
+    const byId = initialProjects.find(p => p.id === id);
+    if (byId) return byId;
+
+    return initialProjects[0];
+};
 
 export const initialBlogPosts = [
     {

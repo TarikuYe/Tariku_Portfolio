@@ -275,24 +275,30 @@ export const ProjectDeviceMockup = ({ project, className = "" }) => {
 
     const renderCustomScreen = () => {
         const id = Number(project.id);
-        const slug = (project.slug || project.title || '').toLowerCase();
+        const titleAndSlug = `${project.slug || ''} ${project.title || ''}`.toLowerCase();
 
-        if (id === 1 || slug.includes('weekly') || slug.includes('report') || slug.includes('automation')) {
-            return <WeeklyReportPreview />;
-        }
-        if (id === 2 || slug.includes('qr') || slug.includes('generator')) {
-            return <QrStudioPreview />;
-        }
-        if (id === 3 || slug.includes('tourism') || slug.includes('sentiment') || slug.includes('wolkite')) {
-            return <TourismSystemPreview />;
-        }
-        if (id === 4 || slug.includes('menu') || slug.includes('restaurant') || slug.includes('hotel')) {
-            return <DigitalMenuPreview />;
-        }
-        if (id === 5 || slug.includes('kids') || slug.includes('android') || slug.includes('kg')) {
+        // 1. Kids learning app check
+        if (titleAndSlug.includes('kid') || titleAndSlug.includes('learn') || titleAndSlug.includes('kg') || id === 4) {
             return <KidssomingAndroidPreview />;
         }
-        return <WeeklyReportPreview />;
+        // 2. QR Studio check
+        if (titleAndSlug.includes('qr') || id === 1) {
+            return <QrStudioPreview />;
+        }
+        // 3. Tourism check
+        if (titleAndSlug.includes('tour') || titleAndSlug.includes('sentiment') || titleAndSlug.includes('wolaita') || titleAndSlug.includes('wolkite') || id === 2) {
+            return <TourismSystemPreview />;
+        }
+        // 4. Digital Menu check
+        if (titleAndSlug.includes('menu') || titleAndSlug.includes('restaurant') || titleAndSlug.includes('hotel') || titleAndSlug.includes('dining') || id === 3) {
+            return <DigitalMenuPreview />;
+        }
+        // 5. Weekly Report check
+        if (titleAndSlug.includes('report') || titleAndSlug.includes('weekly') || titleAndSlug.includes('automation') || id === 5) {
+            return <WeeklyReportPreview />;
+        }
+
+        return <KidssomingAndroidPreview />;
     };
 
     return (

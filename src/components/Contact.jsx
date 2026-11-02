@@ -154,7 +154,7 @@ const Contact = () => {
                                 >
                                     +251919421910
                                 </a>
-                                <p className="text-slate-400 text-xs mt-1">Wolkite / Addis Ababa, Ethiopia</p>
+                                <p className="text-slate-400 text-xs mt-1">Addis Ababa, Ethiopia</p>
                             </div>
                         </div>
 

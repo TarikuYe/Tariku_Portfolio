@@ -45,7 +45,7 @@ const Navbar = () => {
                     {/* Brand Logo */}
                     {isHomePage ? (
                         <ScrollLink to="hero" smooth={true} className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1">
-                            Tariku<span className="text-emerald-400 group-hover:text-emerald-300 transition-colors">Projects</span>
+                            Tariku<span className="text-emerald-400 group-hover:text-emerald-300 transition-colors">Negesa</span>
                         </ScrollLink>
                     ) : (
                         <RouterLink to="/" className="cursor-pointer text-lg md:text-xl font-bold tracking-tight text-white group flex items-center gap-1">
